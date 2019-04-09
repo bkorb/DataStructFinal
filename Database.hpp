@@ -109,7 +109,7 @@ Element<T>::~Element(){
 }
 
 //Helper function to double the size of an array of AbstractElement pointers (TODO)
-void doublePointerArray(AbstractElement **&elements, int &size, int entries){
+inline void doublePointerArray(AbstractElement **&elements, int &size, int entries){
 	AbstractElement **replacement = new AbstractElement*[size*2];
 	for(int i = 0; i<entries; i++){
 		replacement[i] = elements[i];
@@ -122,7 +122,7 @@ void doublePointerArray(AbstractElement **&elements, int &size, int entries){
 
 //Helper function to double the size of an array of Elements
 template <class T>
-void doubleArray(Element<T> *&elements, int &size, int entries){
+inline void doubleArray(Element<T> *&elements, int &size, int entries){
 	Element<T> *replacement = new Element<T>[size*2];
 	for(int i = 0; i<entries; i++){
 		replacement[i] = elements[i];
@@ -134,7 +134,7 @@ void doubleArray(Element<T> *&elements, int &size, int entries){
 }
 
 //Helper function to insert an AbstractElement pointer into an array of AbstractElement pointers
-void insertIntoPointerArray(AbstractElement **&elements, int size, int entries, AbstractElement *element){
+inline void insertIntoPointerArray(AbstractElement **&elements, int size, int entries, AbstractElement *element){
 	if(entries==0){
 		elements[0] = element;
 		return;
@@ -163,7 +163,7 @@ void insertIntoPointerArray(AbstractElement **&elements, int size, int entries, 
 
 //Helper function to insert an Element into an array of Elements
 template <class T>
-Element<T> *insertIntoArray(Element<T> *&array, int size, int entries, Element<T> element){
+inline Element<T> *insertIntoArray(Element<T> *&array, int size, int entries, Element<T> element){
 	if(entries==0){
 		array[0] = element;
 		return array;
