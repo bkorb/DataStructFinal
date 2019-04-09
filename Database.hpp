@@ -3,13 +3,14 @@
 
 using namespace std;
 
-#define SIZE 2
-
+//Abstract class that can hold any type of Element
 struct AbstractElement{
 public:
 	string type;
 };
 
+//Template class that serves as a storage device for table elements
+//that are stored in sorted arrays
 template <class T>
 class Element : public AbstractElement{
 protected:
@@ -26,6 +27,8 @@ public:
 	AbstractElement **getPointers(int &_entries);
 };
 
+//Template class that serves as a storage device for table elements
+//that are stored in unsorted linked lists
 template <class T>
 class ListElement : public Element<T>{
 public:
@@ -36,6 +39,7 @@ public:
 	~ListElement();
 };
 
+//Template class that stores a sorted array of element classes
 template <class T>
 class ArrayTable{
 private:
@@ -50,6 +54,7 @@ public:
 	Element<T> *findElement(Element<T> element);
 };
 
+//Template class that stores an unsorted linked list of element classes
 template <class T>
 class ListTable{
 private:
@@ -61,6 +66,7 @@ public:
 	void deleteElement(ListElement<T> *element);
 };
 
+//Default constructor for Element class
 template <class T>
 Element<T>::Element(){
 	data = T();
@@ -70,6 +76,7 @@ Element<T>::Element(){
 	entries = 0;
 }
 
+//Main constructor for Element class
 template <class T>
 Element<T>::Element(T _data){
 	type = typeid(T).name();
@@ -79,6 +86,7 @@ Element<T>::Element(T _data){
 	entries = 0;
 }
 
+//Copy constructor for element class
 template <class T>
 Element<T>::Element(const Element<T> &old){
 	type = typeid(T).name();
@@ -91,6 +99,7 @@ Element<T>::Element(const Element<T> &old){
 	entries = old.entries;
 }
 
+//Destructor for Element class (TODO)
 template <class T>
 Element<T>::~Element(){
 	for(int i = 0; i<entries; i++){
@@ -99,6 +108,7 @@ Element<T>::~Element(){
 	delete[] pointers;
 }
 
+//Helper function to double the size of an array of AbstractElement pointers (TODO)
 void doublePointerArray(AbstractElement **&elements, int &size, int entries){
 	AbstractElement **replacement = new AbstractElement*[size*2];
 	for(int i = 0; i<entries; i++){
@@ -110,6 +120,7 @@ void doublePointerArray(AbstractElement **&elements, int &size, int entries){
 	//TODO: delete[] temp;
 }
 
+//Helper function to double the size of an array of Elements
 template <class T>
 void doubleArray(Element<T> *&elements, int &size, int entries){
 	Element<T> *replacement = new Element<T>[size*2];
@@ -122,6 +133,7 @@ void doubleArray(Element<T> *&elements, int &size, int entries){
 	//TODO: delete[] temp;
 }
 
+//Helper function to insert an AbstractElement pointer into an array of AbstractElement pointers
 void insertIntoPointerArray(AbstractElement **&elements, int size, int entries, AbstractElement *element){
 	if(entries==0){
 		elements[0] = element;
@@ -149,6 +161,7 @@ void insertIntoPointerArray(AbstractElement **&elements, int size, int entries, 
 	elements[start] = element;
 }
 
+//Helper function to insert an Element into an array of Elements
 template <class T>
 Element<T> *insertIntoArray(Element<T> *&array, int size, int entries, Element<T> element){
 	if(entries==0){
@@ -178,6 +191,8 @@ Element<T> *insertIntoArray(Element<T> *&array, int size, int entries, Element<T
 	return array+start;
 }
 
+
+//Function to add [a pointer to an Element in another table] to an Element
 template <class T>
 void Element<T>::addPointer(AbstractElement *element){
 	if(entries>=size){
@@ -187,12 +202,14 @@ void Element<T>::addPointer(AbstractElement *element){
 	entries++;
 }
 
+//Function to return all Elements in other tables pointed to by an Element
 template <class T>
 AbstractElement **Element<T>::getPointers(int &_entries){
 	_entries = entries;
 	return pointers;
 }
 
+//Default constructor for ListElement
 template <class T>
 ListElement<T>::ListElement(){
 	this->data = T();
@@ -203,6 +220,7 @@ ListElement<T>::ListElement(){
 	prev = nullptr;
 }
 
+//Main constructor for ListElement
 template <class T>
 ListElement<T>::ListElement(T _data){
 	this->type = typeid(T).name();
@@ -213,6 +231,7 @@ ListElement<T>::ListElement(T _data){
 	prev = nullptr;
 }
 
+//Destructor for ListElement (TODO)
 template <class T>
 ListElement<T>::~ListElement(){
 	ListElement<T> *node = next;
@@ -223,6 +242,7 @@ ListElement<T>::~ListElement(){
 	}
 }
 
+//Default constructor for ArrayTable
 template <class T>
 ArrayTable<T>::ArrayTable(){
 	array = new Element<T>[1];
@@ -230,11 +250,13 @@ ArrayTable<T>::ArrayTable(){
 	entries = 0;
 }
 
+//Destructor for ArrayTable (TODO)
 template <class T>
 ArrayTable<T>::~ArrayTable(){
 	delete[] array;
 }
 
+//Function to add an Element to an ArrayTable in the correct place
 template <class T>
 Element<T> *ArrayTable<T>::addElement(Element<T> element){
 	if(entries==size){
@@ -245,6 +267,7 @@ Element<T> *ArrayTable<T>::addElement(Element<T> element){
 	return pointer;
 }
 
+//Function to print all Elements in an ArrayTable
 template <class T>
 void ArrayTable<T>::printTable(){
 	for(int i = 0; i<entries; i++){
@@ -252,6 +275,7 @@ void ArrayTable<T>::printTable(){
 	}
 }
 
+//Helper function to find a matching Element in an array of Elements
 template <class T>
 int searchArrayTable(Element<T> *array, Element<T> element, int start, int end){
 	int index = (start+end)/2;
@@ -266,6 +290,7 @@ int searchArrayTable(Element<T> *array, Element<T> element, int start, int end){
 	}
 }
 
+//Function to find a matching Element in an ArrayTable
 template <class T>
 Element<T> *ArrayTable<T>::findElement(Element<T> element){
 	int index = searchArrayTable<T>(array, element, 0, entries-1);
@@ -276,11 +301,13 @@ Element<T> *ArrayTable<T>::findElement(Element<T> element){
 	}
 }
 
+//Default constructor for ListTable
 template <class T>
 ListTable<T>::ListTable(){
 	head = nullptr;
 }
 
+//Destructor for ListTable (TODO)
 template <class T>
 ListTable<T>::~ListTable(){
 	ListElement<T> *node = head;
@@ -291,6 +318,7 @@ ListTable<T>::~ListTable(){
 	}
 }
 
+//Function to add an Element to a ListTable
 template <class T>
 void ListTable<T>::addElement(ListElement<T> *element){
 	if(head){
@@ -302,6 +330,7 @@ void ListTable<T>::addElement(ListElement<T> *element){
 	}
 }
 
+//Fucntion to remove an Element from a ListTable
 template <class T>
 void ListTable<T>::deleteElement(ListElement<T> *element){
 	if(head==element){

@@ -99,7 +99,7 @@ void Inventory::addUnit(string brand, string model, Type type, int size, int pri
 }
 
 Element<Ski> **searchUnits(string *brands, string *models, Type *types, int *sizes, int *prices){
-	
+	AbstractElement **units = new AbstractElement*[]
 	if(brands){
 
 	}
