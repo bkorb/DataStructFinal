@@ -4,7 +4,7 @@
 
 using namespace std;
 
-enum Type {ski, snowboard};
+enum Type {null=0, ski=1, snowboard=2};
 
 class Ski{
 private:
@@ -18,6 +18,7 @@ private:
 	int costOfRepairs;
 public:
 	Ski(string _brand, string _model, Type _type, int _size, int _price, int _cost);
+	Ski();
 };
 
 Ski::Ski(string _brand, string _model, Type _type, int _size, int _price, int _cost){
@@ -29,6 +30,17 @@ Ski::Ski(string _brand, string _model, Type _type, int _size, int _price, int _c
 	cost = _cost;
 	repairs = 0;
 	costOfRepairs = 0;
+}
+
+Ski::Ski(){
+	brand = "";
+	model = "";
+	type = null;
+	size = NULL;
+	price = NULL;
+	cost = NULL;
+	repairs = NULL;
+	costOfRepairs = NULL;
 }
 
 class Inventory{
@@ -47,46 +59,47 @@ public:
 
 void Inventory::addUnit(string brand, string model, Type type, int size, int price, int cost){
 	Ski ski(brand, model, type, size, price, cost);
-	Element<Ski> *unit = new ListElement<ski>(ski);
+	ListElement<Ski> *unit = new ListElement<Ski>(ski);
 	units.addElement(unit);
 
 	Element<string> E_brand(brand);
-	Element<string> foundS = findElement(E_brand);
-	if(!foundS){
+	Element<string> *foundS = brands.findElement(E_brand);
+	if(foundS!=nullptr){
 		foundS = brands.addElement(E_brand);
 	}
-	foundS.addPointer(unit);
+	foundS->addPointer(unit);
 
 	Element<string> E_model(model);
 	foundS = models.findElement(E_model);
-	if(!foundS){
+	if(foundS!=nullptr){
 		foundS = models.addElement(E_model);
 	}
-	foundS.addPointer(unit);
+	foundS->addPointer(unit);
 
 	Element<Type> E_type(type);
-	Element<Type> foundT = types.findElement(E_type);
-	if(!foundT){
+	Element<Type> *foundT = types.findElement(E_type);
+	if(foundT!=nullptr){
 		foundT = types.addElement(E_type);
 	}
-	foundT.addPointer(unit);
+	foundT->addPointer(unit);
 
 	Element<int> E_size(size);
-	Element<int> foundI = sizes.findElement(E_size);
-	if(!foundI){
+	Element<int> *foundI = sizes.findElement(E_size);
+	if(foundI!=nullptr){
 		foundI = sizes.addElement(E_size);
 	}
-	foundI.addPointer(unit);
+	foundI->addPointer(unit);
 
-	Element<int> E_price(price);
+	Element<int> E_price((price/10)*10);
 	foundI = sizes.findElement(E_price);
-	if(!foundI){
+	if(foundI!=nullptr){
 		foundI = prices.addElement(E_price);
 	}
-	foundI.addPointer(unit);
+	foundI->addPointer(unit);
 }
 
 Element<Ski> **searchUnits(string *brands, string *models, Type *types, int *sizes, int *prices){
+	
 	if(brands){
 
 	}
@@ -141,27 +154,29 @@ int main(){
 	int entries;
 	Element<string> search1("Faction");
 	Element<string> *found1 = brands.findElement(search1);
-	Element<string> **pointers1 = found1->getPointers(entries);
+	AbstractElement **pointers1 = found1->getPointers(entries);
 	cout << "All faction units:" << endl;
 	for(int i = 0; i<entries; i++){
-		cout << pointers1[i]->data << endl;
+		cout << ((Element<string>*)pointers1[i])->data << endl;
 	}
 	Element<string> search2("Line");
 	Element<string> *found2 = brands.findElement(search2);
-	Element<string> **pointers2 = found2->getPointers(entries);
+	AbstractElement **pointers2 = found2->getPointers(entries);
 	cout << "All line units:" << endl;
 	for(int i = 0; i<entries; i++){
-		cout << pointers2[i]->data << endl;
+		cout << ((Element<string>*)pointers2[i])->data << endl;
 	}
 	Element<string> search3("Armada");
 	Element<string> *found3 = brands.findElement(search3);
-	Element<string> **pointers3 = found3->getPointers(entries);
+	AbstractElement **pointers3 = found3->getPointers(entries);
 	cout << "All armada units:" << endl;
 	for(int i = 0; i<entries; i++){
-		cout << pointers3[i]->data << endl;
+		cout << ((Element<string>*)pointers3[i])->data << endl;
 	}
 
 	Inventory inventory;
+
+	cout << "Done" << endl;
 
 	return 0;
 }

@@ -6,6 +6,7 @@ using namespace std;
 #define SIZE 2
 
 struct AbstractElement{
+public:
 	string type;
 };
 
@@ -62,8 +63,9 @@ public:
 
 template <class T>
 Element<T>::Element(){
+	data = T();
 	type = typeid(T).name();
-	pointers = new Element<T>*[1];
+	pointers = new AbstractElement*[1];
 	size = 1;
 	entries = 0;
 }
@@ -72,7 +74,7 @@ template <class T>
 Element<T>::Element(T _data){
 	type = typeid(T).name();
 	data = _data;
-	pointers = new Element<T>*[1];
+	pointers = new AbstractElement*[1];
 	size = 1;
 	entries = 0;
 }
@@ -81,7 +83,7 @@ template <class T>
 Element<T>::Element(const Element<T> &old){
 	type = typeid(T).name();
 	data = old.data;
-	pointers = new Element<T>*[old.size];
+	pointers = new AbstractElement*[old.size];
 	for(int i = 0; i<old.entries; i++){
 		pointers[i] = old.pointers[i];
 	}
@@ -97,13 +99,12 @@ Element<T>::~Element(){
 	delete[] pointers;
 }
 
-template <class T>
-void doublePointerArray(Element<T> **&elements, int &size, int entries){
-	Element<T> **replacement = new Element<T>*[size*2];
+void doublePointerArray(AbstractElement **&elements, int &size, int entries){
+	AbstractElement **replacement = new AbstractElement*[size*2];
 	for(int i = 0; i<entries; i++){
 		replacement[i] = elements[i];
 	}
-	Element<T> **temp = elements;
+	AbstractElement **temp = elements;
 	elements = replacement;
 	size*=2;
 	//TODO: delete[] temp;
@@ -121,13 +122,68 @@ void doubleArray(Element<T> *&elements, int &size, int entries){
 	//TODO: delete[] temp;
 }
 
-//TODO: make element any type
+void insertIntoPointerArray(AbstractElement **&elements, int size, int entries, AbstractElement *element){
+	if(entries==0){
+		elements[0] = element;
+		return;
+	}
+
+	if(element>elements[entries-1]){
+		elements[entries] = element;
+		return;
+	}
+
+	int start = 0;
+	int end = entries-1;
+	while(start<end){
+		int index = (start+end)/2;
+		if(element > elements[index]){
+			start = index+1;
+		}else{
+			end = index;
+		}
+	}
+	for(int i = entries; i>start; i--){
+		elements[i] = elements[i-1];
+	}
+	elements[start] = element;
+}
+
+template <class T>
+Element<T> *insertIntoArray(Element<T> *&array, int size, int entries, Element<T> element){
+	if(entries==0){
+		array[0] = element;
+		return array;
+	}
+
+	if(element.data>array[entries-1].data){
+		array[entries] = element;
+		return array+entries;
+	}
+
+	int start = 0;
+	int end = entries-1;
+	while(start<end){
+		int index = (start+end)/2;
+		if(element.data > array[index].data){
+			start = index+1;
+		}else{
+			end = index;
+		}
+	}
+	for(int i = entries; i>start; i--){
+		array[i] = array[i-1];
+	}
+	array[start] = element;
+	return array+start;
+}
+
 template <class T>
 void Element<T>::addPointer(AbstractElement *element){
 	if(entries>=size){
-		doublePointerArray<T>(pointers, size, entries);
+		doublePointerArray(pointers, size, entries);
 	}
-	pointers[entries] = element;
+	insertIntoPointerArray(pointers, size, entries, element);
 	entries++;
 }
 
@@ -139,7 +195,8 @@ AbstractElement **Element<T>::getPointers(int &_entries){
 
 template <class T>
 ListElement<T>::ListElement(){
-	type = typeid(T).name();
+	this->data = T();
+	this->type = typeid(T).name();
 	this->size = 1;
 	this->entries = 0;
 	next = nullptr;
@@ -148,7 +205,7 @@ ListElement<T>::ListElement(){
 
 template <class T>
 ListElement<T>::ListElement(T _data){
-	type = typeid(T).name();
+	this->type = typeid(T).name();
 	this->size = 1;
 	this->entries = 0;
 	this->data = _data;
@@ -183,16 +240,9 @@ Element<T> *ArrayTable<T>::addElement(Element<T> element){
 	if(entries==size){
 		doubleArray<T>(array, size, entries);
 	}
-	int i = 0;
-	while(i<entries && element.data > array[i].data){
-		i++;
-	}
-	for(int j = entries; j>i; j--){
-		array[j] = array[j-1];
-	}
-	array[i] = element;
+	Element<T> *pointer = insertIntoArray(array, size, entries, element);
 	entries++;
-	return array+i;
+	return pointer;
 }
 
 template <class T>
@@ -244,27 +294,9 @@ ListTable<T>::~ListTable(){
 template <class T>
 void ListTable<T>::addElement(ListElement<T> *element){
 	if(head){
-		if(element->data < head->data){
-			head->prev = element;
-			head = element;
-			return;
-		}
-		ListElement<T> *node = head;
-		ListElement<T> *prev = nullptr;
-		while(node && element->data > node->data){
-			prev = node;
-			node = node->next;
-		}
-		if(node){
-			prev->next = element;
-			element->prev = prev;
-			node->prev = element;
-			element->next = node;
-		}else{
-			prev->next = element;
-			element->prev = prev;
-			element->next = nullptr;
-		}
+		element->next = head;
+		head->prev = element;
+		head = element;
 	}else{
 		head = element;
 	}
