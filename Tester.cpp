@@ -8,12 +8,28 @@ enum Type {ski, snowboard};
 
 class Ski{
 private:
+	string brand;
+	string model;
+	Type type;
+	int size;
+	int price;
 	int cost;
 	int repairs;
 	int costOfRepairs;
 public:
-	Ski(int cost);
+	Ski(string _brand, string _model, Type _type, int _size, int _price, int _cost);
 };
+
+Ski::Ski(string _brand, string _model, Type _type, int _size, int _price, int _cost){
+	brand = _brand;
+	model = _model;
+	type = _type;
+	size = _size;
+	price = _price;
+	cost = _cost;
+	repairs = 0;
+	costOfRepairs = 0;
+}
 
 class Inventory{
 private:
@@ -24,17 +40,75 @@ private:
 	ArrayTable<int> prices;
 	ListTable<Ski> units;
 public:
-	Inventory();
-	~Inventory();
-	void addUnit(string brand, string model, Type type, int size, int price);
+	void addUnit(string brand, string model, Type type, int size, int price, int cost);
 	Element<Ski> **searchUnits(string *brands, string *models, Type *types, int *sizes, int *prices);
 	void removeUnit(Element<Ski> *unit);
+};
+
+void Inventory::addUnit(string brand, string model, Type type, int size, int price, int cost){
+	Ski ski(brand, model, type, size, price, cost);
+	Element<Ski> *unit = new ListElement<ski>(ski);
+	units.addElement(unit);
+
+	Element<string> E_brand(brand);
+	Element<string> foundS = findElement(E_brand);
+	if(!foundS){
+		foundS = brands.addElement(E_brand);
+	}
+	foundS.addPointer(unit);
+
+	Element<string> E_model(model);
+	foundS = models.findElement(E_model);
+	if(!foundS){
+		foundS = models.addElement(E_model);
+	}
+	foundS.addPointer(unit);
+
+	Element<Type> E_type(type);
+	Element<Type> foundT = types.findElement(E_type);
+	if(!foundT){
+		foundT = types.addElement(E_type);
+	}
+	foundT.addPointer(unit);
+
+	Element<int> E_size(size);
+	Element<int> foundI = sizes.findElement(E_size);
+	if(!foundI){
+		foundI = sizes.addElement(E_size);
+	}
+	foundI.addPointer(unit);
+
+	Element<int> E_price(price);
+	foundI = sizes.findElement(E_price);
+	if(!foundI){
+		foundI = prices.addElement(E_price);
+	}
+	foundI.addPointer(unit);
 }
+
+Element<Ski> **searchUnits(string *brands, string *models, Type *types, int *sizes, int *prices){
+	if(brands){
+
+	}
+	if(models){
+
+	}
+	if(types){
+
+	}
+	if(sizes){
+
+	}
+	if(prices){
+
+	}
+}
+
 
 int main(){
 	cout << "start" << endl;
-	ArrayTable<string> brands("Brands");
-	ListTable<string> units("Units");
+	ArrayTable<string> brands;
+	ListTable<string> units;
 
 	Element<string> faction("Faction");
 	brands.addElement(faction);
@@ -86,6 +160,8 @@ int main(){
 	for(int i = 0; i<entries; i++){
 		cout << pointers3[i]->data << endl;
 	}
+
+	Inventory inventory;
 
 	return 0;
 }

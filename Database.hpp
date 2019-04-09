@@ -5,10 +5,14 @@ using namespace std;
 
 #define SIZE 2
 
+struct AbstractElement{
+	string type;
+};
+
 template <class T>
-class Element{
+class Element : public AbstractElement{
 protected:
-	Element **pointers;
+	AbstractElement **pointers;
 	int size;
 	int entries;
 public:
@@ -17,8 +21,8 @@ public:
 	Element(const Element<T> &old);
 	Element(T _data);
 	~Element();
-	void addPointer(Element<T> *element);
-	Element<T> **getPointers(int &_entries);
+	void addPointer(AbstractElement *element);
+	AbstractElement **getPointers(int &_entries);
 };
 
 template <class T>
@@ -34,14 +38,13 @@ public:
 template <class T>
 class ArrayTable{
 private:
-	string name;
 	Element<T> *array;
 	int size;
 	int entries;
 public:
-	ArrayTable(string _name);
+	ArrayTable();
 	~ArrayTable();
-	void addElement(Element<T> element);
+	Element<T> *addElement(Element<T> element);
 	void printTable();
 	Element<T> *findElement(Element<T> element);
 };
@@ -49,10 +52,9 @@ public:
 template <class T>
 class ListTable{
 private:
-	string name;
 	ListElement<T> *head;
 public:
-	ListTable(string _name);
+	ListTable();
 	~ListTable();
 	void addElement(ListElement<T> *element);
 	void deleteElement(ListElement<T> *element);
@@ -60,6 +62,7 @@ public:
 
 template <class T>
 Element<T>::Element(){
+	type = typeid(T).name();
 	pointers = new Element<T>*[1];
 	size = 1;
 	entries = 0;
@@ -67,6 +70,7 @@ Element<T>::Element(){
 
 template <class T>
 Element<T>::Element(T _data){
+	type = typeid(T).name();
 	data = _data;
 	pointers = new Element<T>*[1];
 	size = 1;
@@ -75,6 +79,7 @@ Element<T>::Element(T _data){
 
 template <class T>
 Element<T>::Element(const Element<T> &old){
+	type = typeid(T).name();
 	data = old.data;
 	pointers = new Element<T>*[old.size];
 	for(int i = 0; i<old.entries; i++){
@@ -116,8 +121,9 @@ void doubleArray(Element<T> *&elements, int &size, int entries){
 	//TODO: delete[] temp;
 }
 
+//TODO: make element any type
 template <class T>
-void Element<T>::addPointer(Element<T> *element){
+void Element<T>::addPointer(AbstractElement *element){
 	if(entries>=size){
 		doublePointerArray<T>(pointers, size, entries);
 	}
@@ -126,13 +132,14 @@ void Element<T>::addPointer(Element<T> *element){
 }
 
 template <class T>
-Element<T> **Element<T>::getPointers(int &_entries){
+AbstractElement **Element<T>::getPointers(int &_entries){
 	_entries = entries;
 	return pointers;
 }
 
 template <class T>
 ListElement<T>::ListElement(){
+	type = typeid(T).name();
 	this->size = 1;
 	this->entries = 0;
 	next = nullptr;
@@ -141,6 +148,7 @@ ListElement<T>::ListElement(){
 
 template <class T>
 ListElement<T>::ListElement(T _data){
+	type = typeid(T).name();
 	this->size = 1;
 	this->entries = 0;
 	this->data = _data;
@@ -159,8 +167,7 @@ ListElement<T>::~ListElement(){
 }
 
 template <class T>
-ArrayTable<T>::ArrayTable(string _name){
-	name = _name;
+ArrayTable<T>::ArrayTable(){
 	array = new Element<T>[1];
 	size = 1;
 	entries = 0;
@@ -172,7 +179,7 @@ ArrayTable<T>::~ArrayTable(){
 }
 
 template <class T>
-void ArrayTable<T>::addElement(Element<T> element){
+Element<T> *ArrayTable<T>::addElement(Element<T> element){
 	if(entries==size){
 		doubleArray<T>(array, size, entries);
 	}
@@ -185,6 +192,7 @@ void ArrayTable<T>::addElement(Element<T> element){
 	}
 	array[i] = element;
 	entries++;
+	return array+i;
 }
 
 template <class T>
@@ -219,8 +227,7 @@ Element<T> *ArrayTable<T>::findElement(Element<T> element){
 }
 
 template <class T>
-ListTable<T>::ListTable(string _name){
-	name = _name;
+ListTable<T>::ListTable(){
 	head = nullptr;
 }
 
