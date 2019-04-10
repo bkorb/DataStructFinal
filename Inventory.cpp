@@ -85,3 +85,10 @@ Element<Ski> **Inventory::searchUnits(string *brands, string *models, Type *type
 
 	}
 }
+
+void Inventory :: removeUnit(Element<Ski> *unit){
+	
+	
+	
+}
+	
