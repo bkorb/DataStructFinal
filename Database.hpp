@@ -23,6 +23,7 @@ public:
 	Element(T _data);
 	~Element();
 	void addPointer(AbstractElement *element);
+	void deletePointer(AbstractElement *element);
 	AbstractElement **getPointers(int &_entries);
 };
 
@@ -97,22 +98,21 @@ Element<T>::Element(const Element<T> &old){
 	entries = old.entries;
 }
 
-//Destructor for Element class (TODO)
+//Destructor for Element class
 template <class T>
 Element<T>::~Element(){
-	//delete[] pointers;
+	//Nothing to do
 }
 
-//Helper function to double the size of an array of AbstractElement pointers (TODO)
+//Helper function to double the size of an array of AbstractElement pointers
 inline void doublePointerArray(AbstractElement **&elements, int &size, int entries){
 	AbstractElement **replacement = new AbstractElement*[size*2];
 	for(int i = 0; i<entries; i++){
 		replacement[i] = elements[i];
 	}
-	AbstractElement **temp = elements;
+	delete[] elements;
 	elements = replacement;
 	size*=2;
-	//TODO: delete[] temp;
 }
 
 //Helper function to double the size of an array of Elements
@@ -122,10 +122,9 @@ inline void doubleArray(Element<T> *&elements, int &size, int entries){
 	for(int i = 0; i<entries; i++){
 		replacement[i] = elements[i];
 	}
-	Element<T> *temp = elements;
+	delete[] elements;
 	elements = replacement;
 	size*=2;
-	//TODO: delete[] temp;
 }
 
 //Helper function to insert an AbstractElement pointer into an array of AbstractElement pointers
@@ -208,6 +207,30 @@ void Element<T>::addPointer(AbstractElement *element){
 	insertIntoPointerArray(pointers, size, entries, element);
 }
 
+inline int searchPointerArray(AbstractElement **array, AbstractElement *element, int start, int end){
+	int index = (start+end)/2;
+	if(array[index]==element){
+		return index;
+	}else if(start>=end){
+		return -1;
+	}else if(element>array[index]){
+		return searchPointerArray(array, element, index+1, end);
+	}else{
+		return searchPointerArray(array, element, start, index-1);
+	}
+}
+
+template <class T>
+void Element<T>::deletePointer(AbstractElement *element){
+	int index = searchPointerArray(pointers, element, 0, entries-1);
+	if(index!=-1){
+		for(int i = index; i<entries-1; i++){
+			pointers[i] = pointers[i+1];
+		}
+		entries--;
+	}
+}
+
 //Function to return all Elements in other tables pointed to by an Element
 template <class T>
 AbstractElement **Element<T>::getPointers(int &_entries){
@@ -237,9 +260,10 @@ ListElement<T>::ListElement(T _data){
 	prev = nullptr;
 }
 
-//Destructor for ListElement (TODO)
+//Destructor for ListElement
 template <class T>
 ListElement<T>::~ListElement(){
+	//Nothing to do
 }
 
 //Default constructor for ArrayTable
@@ -250,9 +274,12 @@ ArrayTable<T>::ArrayTable(){
 	entries = 0;
 }
 
-//Destructor for ArrayTable (TODO)
+//Destructor for ArrayTable
 template <class T>
 ArrayTable<T>::~ArrayTable(){
+	for(int i = 0; i<entries; i++){
+		delete[] array[i].pointers;
+	}
 	delete[] array;
 }
 
@@ -274,6 +301,7 @@ void ArrayTable<T>::printTable(){
 	}
 }
 
+template <class T>
 T *ArrayTable<T>::getQueries(int &_entries){
 	_entries = entries;
 	T *queries = new T[entries];
@@ -285,7 +313,7 @@ T *ArrayTable<T>::getQueries(int &_entries){
 
 //Helper function to find a matching Element in an array of Elements
 template <class T>
-int searchArrayTable(Element<T> *array, Element<T> element, int start, int end){
+inline int searchArrayTable(Element<T> *array, Element<T> element, int start, int end){
 	int index = (start+end)/2;
 	if(array[index].data==element.data){
 		return index;
@@ -322,6 +350,7 @@ ListTable<T>::~ListTable(){
 	while(node){
 		ListElement<T>* prev = node;
 		node = node->next;
+		delete[] prev->pointers;
 		delete prev;
 	}
 }

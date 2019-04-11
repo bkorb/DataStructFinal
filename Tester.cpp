@@ -53,13 +53,25 @@ int main(){
 	inventory.sizes.printTable();
 	cout << "Prices: " << endl; 
 	inventory.prices.printTable();
-	string brands[] = {};
-	string models[] = {"Candide"};
+	string brands[] = {"Faction"};
+	string models[] = {};
 	Type types[] = {};
-	int sizes[] = {160, 200};
-	int prices[] = {120, 130};
+	int sizes[] = {};
+	int prices[] = {};
+
 	int entries;
-	Element<Ski> **units = inventory.searchUnits(brands, 0, models, 1, types, 0, sizes, 2, prices, 2, entries);
+	Element<Ski> **units = inventory.searchUnits(brands, 1, models, 0, types, 0, sizes, 0, prices, 0, entries);
+	cout << "Found: " << entries << endl;
+	for(int i = 0; i<entries; i++){
+		Ski unit = units[i]->data;
+		cout << unit.brand << ", " << unit.model << ", " << unit.size << endl;
+	}
+
+	Element<Ski> *choice = units[0];
+	cout << choice << endl;
+	inventory.removeUnit(choice);
+
+	units = inventory.searchUnits(brands, 1, models, 0, types, 0, sizes, 0, prices, 0, entries);
 	cout << "Found: " << entries << endl;
 	for(int i = 0; i<entries; i++){
 		Ski unit = units[i]->data;

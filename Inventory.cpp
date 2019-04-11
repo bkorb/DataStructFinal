@@ -56,18 +56,23 @@ void Inventory::addUnit(string brand, string model, Type type, int size, int pri
 
 	Element<string> *foundBrand = brands.addElement(Element<string>(brand));
 	foundBrand->addPointer(unit);
+	unit->addPointer(foundBrand);
 
 	Element<string> *foundModel = models.addElement(Element<string>(model));
 	foundModel->addPointer(unit);
+	unit->addPointer(foundModel);
 
 	Element<Type> *foundType = types.addElement(Element<Type>(type));
 	foundType->addPointer(unit);
+	unit->addPointer(foundType);
 
 	Element<int> *foundSize = sizes.addElement(Element<int>((size/10)*10));
 	foundSize->addPointer(unit);
+	unit->addPointer(foundSize);
 
 	Element<int> *foundPrice = prices.addElement(Element<int>((price/10)*10));
 	foundPrice->addPointer(unit);
+	unit->addPointer(foundPrice);
 }
 
 //Funciton to query inventory for any combination of parameters and
@@ -237,5 +242,21 @@ Element<Ski> **Inventory::searchUnits(string *brandList, int numBrands, string *
 }
 
 void Inventory::removeUnit(Element<Ski> *unit){
-	cout << "Not yet imlemented" << endl;
+	ListElement<Ski> *listunit = (ListElement<Ski> *)unit;
+	units.deleteElement(listunit);
+
+	Element<string> *brand = brands.findElement(Element<string>(listunit->data.brand));
+	brand->deletePointer(listunit);
+
+	Element<string> *model = models.findElement(Element<string>(listunit->data.model));
+	model->deletePointer(listunit);
+
+	Element<Type> *type = types.findElement(Element<Type>(listunit->data.type));
+	type->deletePointer(listunit);
+
+	Element<int> *size = sizes.findElement(Element<int>((listunit->data.size/10)*10));
+	size->deletePointer(listunit);
+
+	Element<int> *price = prices.findElement(Element<int>((listunit->data.price/10)*10));
+	price->deletePointer(listunit);
 }
