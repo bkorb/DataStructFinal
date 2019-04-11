@@ -50,27 +50,31 @@ ostream & operator<<(ostream &Str, const Ski &v) {
 //Function to add a new unit to the inventory
 void Inventory::addUnit(string brand, string model, Type type, int size, int price, int cost){
 	Ski ski(brand, model, type, size, price, cost);
+	addUnit(ski);
+}
+
+void Inventory::addUnit(Ski ski){
 	//cout << "Adding " << ski << endl;
 	ListElement<Ski> *unit = new ListElement<Ski>(ski);
 	units.addElement(unit);
 
-	Element<string> *foundBrand = brands.addElement(Element<string>(brand));
+	Element<string> *foundBrand = brands.addElement(Element<string>(ski.brand));
 	foundBrand->addPointer(unit);
 	unit->addPointer(foundBrand);
 
-	Element<string> *foundModel = models.addElement(Element<string>(model));
+	Element<string> *foundModel = models.addElement(Element<string>(ski.model));
 	foundModel->addPointer(unit);
 	unit->addPointer(foundModel);
 
-	Element<Type> *foundType = types.addElement(Element<Type>(type));
+	Element<Type> *foundType = types.addElement(Element<Type>(ski.type));
 	foundType->addPointer(unit);
 	unit->addPointer(foundType);
 
-	Element<int> *foundSize = sizes.addElement(Element<int>((size/10)*10));
+	Element<int> *foundSize = sizes.addElement(Element<int>((ski.size/10)*10));
 	foundSize->addPointer(unit);
 	unit->addPointer(foundSize);
 
-	Element<int> *foundPrice = prices.addElement(Element<int>((price/10)*10));
+	Element<int> *foundPrice = prices.addElement(Element<int>((ski.price/10)*10));
 	foundPrice->addPointer(unit);
 	unit->addPointer(foundPrice);
 }

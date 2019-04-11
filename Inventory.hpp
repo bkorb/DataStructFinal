@@ -32,6 +32,7 @@ public:
 	ArrayTable<int> prices;
 	ListTable<Ski> units;
 	void addUnit(string brand, string model, Type type, int size, int price, int cost);
+	void addUnit(Ski ski);
 	Element<Ski> **searchUnits(string *brandList, int numBrands, string *modelList, int numModels, Type *typeList, int numTypes, int *sizeList, int numSizes, int *priceList, int numPrices, int &entries);
 	void removeUnit(Element<Ski> *unit);
 };
