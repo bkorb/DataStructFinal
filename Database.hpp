@@ -207,6 +207,7 @@ void Element<T>::addPointer(AbstractElement *element){
 	insertIntoPointerArray(pointers, size, entries, element);
 }
 
+//Helper function to find a matching pointer in an array of pointers
 inline int searchPointerArray(AbstractElement **array, AbstractElement *element, int start, int end){
 	int index = (start+end)/2;
 	if(array[index]==element){
@@ -220,6 +221,7 @@ inline int searchPointerArray(AbstractElement **array, AbstractElement *element,
 	}
 }
 
+//Function to delete a pointer from an element
 template <class T>
 void Element<T>::deletePointer(AbstractElement *element){
 	int index = searchPointerArray(pointers, element, 0, entries-1);
@@ -301,6 +303,7 @@ void ArrayTable<T>::printTable(){
 	}
 }
 
+//Function to return all elements in an ArrayTable in sorted array form
 template <class T>
 T *ArrayTable<T>::getQueries(int &_entries){
 	_entries = entries;

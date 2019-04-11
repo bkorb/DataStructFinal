@@ -16,6 +16,7 @@ Ski::Ski(string _brand, string _model, Type _type, int _size, int _price, int _c
 	costOfRepairs = 0;
 }
 
+//Ski class copy constructor
 Ski::Ski(const Ski &old){
 	brand = old.brand;
 	model = old.model;
@@ -39,9 +40,12 @@ Ski::Ski(){
 	costOfRepairs = NULL;
 }
 
+//Destructor for Ski class
 Ski::~Ski(){
+	//Nothing to do
 }
 
+//Function that allows ski objects to be printed
 ostream & operator<<(ostream &Str, const Ski &v) { 
   Str << "Ski: " << v.brand << ", " << v.model << ", " << v.type << ", " << v.size << ", " << v.price;
   return Str;
@@ -53,6 +57,7 @@ void Inventory::addUnit(string brand, string model, Type type, int size, int pri
 	addUnit(ski);
 }
 
+//Function to add a new unit to the inventory from Ski class
 void Inventory::addUnit(Ski ski){
 	//cout << "Adding " << ski << endl;
 	ListElement<Ski> *unit = new ListElement<Ski>(ski);
@@ -245,6 +250,7 @@ Element<Ski> **Inventory::searchUnits(string *brandList, int numBrands, string *
 	return skiunits;
 }
 
+//Function to remove a unit from inventory
 void Inventory::removeUnit(Element<Ski> *unit){
 	ListElement<Ski> *listunit = (ListElement<Ski> *)unit;
 	units.deleteElement(listunit);
