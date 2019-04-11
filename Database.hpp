@@ -13,11 +13,10 @@ public:
 //that are stored in sorted arrays
 template <class T>
 class Element : public AbstractElement{
-protected:
+public:
 	AbstractElement **pointers;
 	int size;
 	int entries;
-public:
 	T data;
 	Element();
 	Element(const Element<T> &old);
@@ -42,24 +41,23 @@ public:
 //Template class that stores a sorted array of element classes
 template <class T>
 class ArrayTable{
-private:
+public:
 	Element<T> *array;
 	int size;
 	int entries;
-public:
 	ArrayTable();
 	~ArrayTable();
 	Element<T> *addElement(Element<T> element);
 	void printTable();
+	T *getQueries(int &_entries);
 	Element<T> *findElement(Element<T> element);
 };
 
 //Template class that stores an unsorted linked list of element classes
 template <class T>
 class ListTable{
-private:
-	ListElement<T> *head;
 public:
+	ListElement<T> *head;
 	ListTable();
 	~ListTable();
 	void addElement(ListElement<T> *element);
@@ -102,10 +100,7 @@ Element<T>::Element(const Element<T> &old){
 //Destructor for Element class (TODO)
 template <class T>
 Element<T>::~Element(){
-	for(int i = 0; i<entries; i++){
-		delete pointers[i];
-	}
-	delete[] pointers;
+	//delete[] pointers;
 }
 
 //Helper function to double the size of an array of AbstractElement pointers (TODO)
@@ -134,14 +129,16 @@ inline void doubleArray(Element<T> *&elements, int &size, int entries){
 }
 
 //Helper function to insert an AbstractElement pointer into an array of AbstractElement pointers
-inline void insertIntoPointerArray(AbstractElement **&elements, int size, int entries, AbstractElement *element){
+inline void insertIntoPointerArray(AbstractElement **&elements, int size, int &entries, AbstractElement *element){
 	if(entries==0){
 		elements[0] = element;
+		entries++;
 		return;
 	}
 
 	if(element>elements[entries-1]){
 		elements[entries] = element;
+		entries++;
 		return;
 	}
 
@@ -155,23 +152,29 @@ inline void insertIntoPointerArray(AbstractElement **&elements, int size, int en
 			end = index;
 		}
 	}
+	if(elements[start] == element){
+		return;
+	}
 	for(int i = entries; i>start; i--){
 		elements[i] = elements[i-1];
 	}
 	elements[start] = element;
+	entries++;
 }
 
 //Helper function to insert an Element into an array of Elements
 template <class T>
-inline Element<T> *insertIntoArray(Element<T> *&array, int size, int entries, Element<T> element){
+inline Element<T> *insertIntoArray(Element<T> *&array, int size, int &entries, Element<T> element){
 	if(entries==0){
 		array[0] = element;
-		return array;
+		entries++;
+		return &array[0];
 	}
 
 	if(element.data>array[entries-1].data){
 		array[entries] = element;
-		return array+entries;
+		entries++;
+		return &array[entries-1];
 	}
 
 	int start = 0;
@@ -184,22 +187,25 @@ inline Element<T> *insertIntoArray(Element<T> *&array, int size, int entries, El
 			end = index;
 		}
 	}
+	if(array[start].data == element.data){
+		return &array[start];
+	}
 	for(int i = entries; i>start; i--){
 		array[i] = array[i-1];
 	}
 	array[start] = element;
-	return array+start;
+	entries++;
+	return &array[start];
 }
 
 
 //Function to add [a pointer to an Element in another table] to an Element
 template <class T>
 void Element<T>::addPointer(AbstractElement *element){
-	if(entries>=size){
+	if(entries==size){
 		doublePointerArray(pointers, size, entries);
 	}
 	insertIntoPointerArray(pointers, size, entries, element);
-	entries++;
 }
 
 //Function to return all Elements in other tables pointed to by an Element
@@ -234,12 +240,6 @@ ListElement<T>::ListElement(T _data){
 //Destructor for ListElement (TODO)
 template <class T>
 ListElement<T>::~ListElement(){
-	ListElement<T> *node = next;
-	while(node){
-		ListElement<T>* prev = node;
-		node = node->next;
-		delete prev;
-	}
 }
 
 //Default constructor for ArrayTable
@@ -263,7 +263,6 @@ Element<T> *ArrayTable<T>::addElement(Element<T> element){
 		doubleArray<T>(array, size, entries);
 	}
 	Element<T> *pointer = insertIntoArray(array, size, entries, element);
-	entries++;
 	return pointer;
 }
 
@@ -273,6 +272,15 @@ void ArrayTable<T>::printTable(){
 	for(int i = 0; i<entries; i++){
 		cout << array[i].data << endl;
 	}
+}
+
+T *ArrayTable<T>::getQueries(int &_entries){
+	_entries = entries;
+	T *queries = new T[entries];
+	for(int i = 0; i<entries; i++){
+		queries[i] = array[i].data;
+	}
+	return queries;
 }
 
 //Helper function to find a matching Element in an array of Elements
@@ -297,7 +305,7 @@ Element<T> *ArrayTable<T>::findElement(Element<T> element){
 	if(index==-1){
 		return nullptr;
 	}else{
-		return array+index;
+		return &array[index];
 	}
 }
 

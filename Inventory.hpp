@@ -7,7 +7,7 @@ using namespace std;
 enum Type {null=0, ski=1, snowboard=2};
 
 class Ski{
-private:
+public:
 	string brand;
 	string model;
 	Type type;
@@ -16,21 +16,22 @@ private:
 	int cost;
 	int repairs;
 	int costOfRepairs;
-public:
 	Ski(string _brand, string _model, Type _type, int _size, int _price, int _cost);
 	Ski();
+	Ski(const Ski &old);
+	~Ski();
+	friend ostream & operator<<(ostream &Str, const Ski &v);
 };
 
 class Inventory{
-private:
+public:
 	ArrayTable<string> brands;
 	ArrayTable<string> models;
 	ArrayTable<Type> types;
 	ArrayTable<int> sizes;
 	ArrayTable<int> prices;
 	ListTable<Ski> units;
-public:
 	void addUnit(string brand, string model, Type type, int size, int price, int cost);
-	Element<Ski> **searchUnits(string *brands, string *models, Type *types, int *sizes, int *prices);
+	Element<Ski> **searchUnits(string *brandList, int numBrands, string *modelList, int numModels, Type *typeList, int numTypes, int *sizeList, int numSizes, int *priceList, int numPrices, int &entries);
 	void removeUnit(Element<Ski> *unit);
 };
