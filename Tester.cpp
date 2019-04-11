@@ -56,11 +56,11 @@ int main(){
 	string brands[] = {"Faction"};
 	string models[] = {};
 	Type types[] = {};
-	int sizes[] = {};
+	int sizes[] = {170};
 	int prices[] = {};
 
 	int entries;
-	Element<Ski> **units = inventory.searchUnits(brands, 1, models, 0, types, 0, sizes, 0, prices, 0, entries);
+	Element<Ski> **units = inventory.searchUnits(brands, 1, models, 0, types, 0, sizes, 1, prices, 0, entries);
 	cout << "Found: " << entries << endl;
 	for(int i = 0; i<entries; i++){
 		Ski unit = units[i]->data;

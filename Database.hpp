@@ -346,7 +346,7 @@ ListTable<T>::ListTable(){
 	head = nullptr;
 }
 
-//Destructor for ListTable (TODO)
+//Destructor for ListTable
 template <class T>
 ListTable<T>::~ListTable(){
 	ListElement<T> *node = head;
