@@ -4,8 +4,10 @@
 
 using namespace std;
 
+//Type enum definition
 enum Type {null=0, ski=1, snowboard=2};
 
+//Ski class definition
 class Ski{
 public:
 	string brand;
@@ -23,6 +25,7 @@ public:
 	friend ostream & operator<<(ostream &Str, const Ski &v);
 };
 
+//Inventory class definition
 class Inventory{
 public:
 	ArrayTable<string> brands;
@@ -37,8 +40,10 @@ public:
 	void removeUnit(Element<Ski> *unit);
 };
 
+//Type enum print function definition
 ostream & operator<<(ostream &Str, const Type &v);
 
+//Sorting function definitions
 void sortByModel(Element<Ski> **&units, int low, int high);
 void sortByBrand(Element<Ski> **&units, int low, int high);
 void sortByType(Element<Ski> **&units, int low, int high);

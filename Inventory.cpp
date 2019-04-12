@@ -51,6 +51,7 @@ ostream & operator<<(ostream &Str, const Ski &v) {
 	return Str;
 }
 
+//Function that allows type enum to be printed
 ostream & operator<<(ostream &Str, const Type &v) { 
 	if(v==ski){
 		Str << "Ski";
@@ -254,12 +255,14 @@ void Inventory::removeUnit(Element<Ski> *unit){
 	price->deletePointer(listunit);
 }
 
+//Helper function to swap two elements of an array
 void swapElements(Element<Ski> *&a, Element<Ski> *&b){
 	Element<Ski> *temp = a;
 	a = b;
 	b = temp;
 }
 
+//Function to sort array by brand
 void sortByBrand(Element<Ski> **&units, int low, int high){
 	if(low<high){
 		Element<Ski> *pivot = units[high];
@@ -276,6 +279,7 @@ void sortByBrand(Element<Ski> **&units, int low, int high){
 	}
 }
 
+//Function to sort array by model
 void sortByModel(Element<Ski> **&units, int low, int high){
 	if(low<high){
 		Element<Ski> *pivot = units[high];
@@ -292,6 +296,7 @@ void sortByModel(Element<Ski> **&units, int low, int high){
 	}
 }
 
+//Function to sort array by type
 void sortByType(Element<Ski> **&units, int low, int high){
 	if(low<high){
 		Element<Ski> *pivot = units[high];
@@ -308,6 +313,7 @@ void sortByType(Element<Ski> **&units, int low, int high){
 	}
 }
 
+//Function to sort array by size
 void sortBySize(Element<Ski> **&units, int low, int high){
 	if(low<high){
 		Element<Ski> *pivot = units[high];
@@ -324,6 +330,7 @@ void sortBySize(Element<Ski> **&units, int low, int high){
 	}
 }
 
+//Function to sort array by price
 void sortByPrice(Element<Ski> **&units, int low, int high){
 	if(low<high){
 		Element<Ski> *pivot = units[high];

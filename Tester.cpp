@@ -6,6 +6,7 @@
 
 using namespace std;
 
+//Function to read ski data (format: Brand,Model,Type,Size,Price) into inventory
 void readFileIntoInventory(string filename, Inventory &inventory){
 	ifstream file(filename);
 	string line;
@@ -39,6 +40,7 @@ void readFileIntoInventory(string filename, Inventory &inventory){
 	file.close();
 }
 
+//Function to get user input for a specific parameter
 template <class T>
 T *getParameterArray(string parameter, ArrayTable<T> &set, int &entries){
 	entries = 0;
@@ -49,7 +51,7 @@ T *getParameterArray(string parameter, ArrayTable<T> &set, int &entries){
 		cout << i+1 << ". " << options[i] << endl;
 	}
 	string choices;
-	cout << "Enter your choices separated by commas" << endl;
+	cout << "Enter your choices separated by commas or type all to select all options" << endl;
 	getline(cin, choices);
 	if(choices=="all" || choices=="a" || choices=="All" || choices=="A"){
 		entries = 0;
@@ -70,6 +72,7 @@ T *getParameterArray(string parameter, ArrayTable<T> &set, int &entries){
 	return parameters;
 }
 
+//Function to prompt the user to make a query
 void makeQuery(Inventory &inventory){
 	int numBrands, numModels, numTypes, numSizes, numPrices;
 	string *brands = getParameterArray<string>("Brand", inventory.brands, numBrands);
@@ -80,11 +83,16 @@ void makeQuery(Inventory &inventory){
 
 	int entries;
 	Element<Ski> **units = inventory.searchUnits(brands, numBrands, models, numModels, types, numTypes, sizes, numSizes, prices, numPrices, entries);
-	cout << "Choose how to sort: " << endl;
+	cout << "Choose how to sort (defult price): " << endl;
 	cout << "1. Sort by brand\n2. Sort by model\n3. Sort by type\n4. Sort by size\n5. Sort by price" << endl;
 	string choice;
 	getline(cin, choice);
-	int decision = stoi(choice);
+	int decision = 5;
+	if(choice==""){
+		decision = 5;
+	}else{
+		decision = stoi(choice);
+	}
 	switch(decision){
 		case 1: {
 			sortByBrand(units, 0, entries-1);
@@ -113,10 +121,11 @@ void makeQuery(Inventory &inventory){
 	}
 	cout << "Found: " << entries << endl;
 	for(int i = 0; i<entries; i++){
-		cout << i << ". " << units[i]->data << endl;
+		cout << i+1 << ". " << units[i]->data << endl;
 	}
 }
 
+//Main
 int main(){
 	Inventory inventory;
 	readFileIntoInventory("skis.csv", inventory);
