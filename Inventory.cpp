@@ -47,8 +47,19 @@ Ski::~Ski(){
 
 //Function that allows ski objects to be printed
 ostream & operator<<(ostream &Str, const Ski &v) { 
-  Str << "Ski: " << v.brand << ", " << v.model << ", " << v.type << ", " << v.size << ", " << v.price;
-  return Str;
+	Str << v.type << ": " << v.brand << " " << v.model << ", " << v.size << "cm, $" << v.price;
+	return Str;
+}
+
+ostream & operator<<(ostream &Str, const Type &v) { 
+	if(v==ski){
+		Str << "Ski";
+	}else if(v==snowboard){
+		Str << "Snowboard";
+	}else{
+		Str << "NULL";
+	}
+	return Str;
 }
 
 //Function to add a new unit to the inventory
@@ -134,7 +145,19 @@ AbstractElement **getQueryPointers(ArrayTable<T> &table, T *searchList, int numS
 //return all units that match
 //TODO: speed up array combining
 Element<Ski> **Inventory::searchUnits(string *brandList, int numBrands, string *modelList, int numModels, Type *typeList, int numTypes, int *sizeList, int numSizes, int *priceList, int numPrices, int &entries){
-	cout << "start" << endl;
+	if(numBrands==0 && numModels==0 && numTypes==0 && numSizes==0 && numPrices==0){
+		int num = 0;
+		string *search = brands.getQueries(num);
+		int allelements = 0;
+		AbstractElement **allunits = getQueryPointers<string>(brands, search, num, allelements);
+		Element<Ski> **units = new Element<Ski>*[allelements];
+		entries = allelements;
+		for(int i = 0; i<allelements; i++){
+			units[i] = (Element<Ski> *)allunits[i];
+		}
+		return units;
+	}
+
 	AbstractElement **allunits = new AbstractElement*[0];
 	int allelements = 0;
 
@@ -229,4 +252,90 @@ void Inventory::removeUnit(Element<Ski> *unit){
 
 	Element<int> *price = prices.findElement(Element<int>((listunit->data.price/10)*10));
 	price->deletePointer(listunit);
+}
+
+void swapElements(Element<Ski> *&a, Element<Ski> *&b){
+	Element<Ski> *temp = a;
+	a = b;
+	b = temp;
+}
+
+void sortByBrand(Element<Ski> **&units, int low, int high){
+	if(low<high){
+		Element<Ski> *pivot = units[high];
+		int i = low;
+		for(int j = low; j<high; j++){
+			if(units[j]->data.brand<=pivot->data.brand){
+				swapElements(units[i], units[j]);
+				i++;
+			}
+		}
+		swapElements(units[i], units[high]);
+		sortByBrand(units, low, i-1); 
+	    sortByBrand(units, i+1, high);
+	}
+}
+
+void sortByModel(Element<Ski> **&units, int low, int high){
+	if(low<high){
+		Element<Ski> *pivot = units[high];
+		int i = low;
+		for(int j = low; j<high; j++){
+			if(units[j]->data.model<=pivot->data.model){
+				swapElements(units[i], units[j]);
+				i++;
+			}
+		}
+		swapElements(units[i], units[high]);
+		sortByModel(units, low, i-1); 
+	    sortByModel(units, i+1, high);
+	}
+}
+
+void sortByType(Element<Ski> **&units, int low, int high){
+	if(low<high){
+		Element<Ski> *pivot = units[high];
+		int i = low;
+		for(int j = low; j<high; j++){
+			if(units[j]->data.type<=pivot->data.type){
+				swapElements(units[i], units[j]);
+				i++;
+			}
+		}
+		swapElements(units[i], units[high]);
+		sortByType(units, low, i-1); 
+	    sortByType(units, i+1, high);
+	}
+}
+
+void sortBySize(Element<Ski> **&units, int low, int high){
+	if(low<high){
+		Element<Ski> *pivot = units[high];
+		int i = low;
+		for(int j = low; j<high; j++){
+			if(units[j]->data.size<=pivot->data.size){
+				swapElements(units[i], units[j]);
+				i++;
+			}
+		}
+		swapElements(units[i], units[high]);
+		sortBySize(units, low, i-1); 
+	    sortBySize(units, i+1, high);
+	}
+}
+
+void sortByPrice(Element<Ski> **&units, int low, int high){
+	if(low<high){
+		Element<Ski> *pivot = units[high];
+		int i = low;
+		for(int j = low; j<high; j++){
+			if(units[j]->data.price<=pivot->data.price){
+				swapElements(units[i], units[j]);
+				i++;
+			}
+		}
+		swapElements(units[i], units[high]);
+		sortByPrice(units, low, i-1); 
+	    sortByPrice(units, i+1, high);
+	}
 }
