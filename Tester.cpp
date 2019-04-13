@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include "Inventory.hpp"
+//#include <QApplication>
+//#include <QPushButton>
 
 using namespace std;
 
@@ -110,10 +112,6 @@ void makeQuery(Inventory &inventory){
 			sortBySize(units, 0, entries-1);
 			break;
 		}
-		case 5: {
-			sortByPrice(units, 0, entries-1);
-			break;
-		}
 		default: {
 			sortByPrice(units, 0, entries-1);
 			break;
@@ -126,10 +124,18 @@ void makeQuery(Inventory &inventory){
 }
 
 //Main
-int main(){
+int main(int argc, char **argv){
 	Inventory inventory;
 	readFileIntoInventory("skis.csv", inventory);
-	while(true){
+
+    /*QApplication app (argc, argv);
+
+    QPushButton button ("Hello world !");
+    button.show();
+
+    return app.exec();*/
+
+    while(true){
 		makeQuery(inventory);
 	}
 	return 0;
