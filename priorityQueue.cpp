@@ -31,7 +31,6 @@ void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int
       priorityQueue[0].month = _month;
       priorityQueue[0].day = _day;
       priorityQueue[0].cost = _cost;
-      priorityQueue[0].numRepairs = 0;
       currentQueueSize++;
       return;
     }
@@ -42,7 +41,6 @@ void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int
       priorityQueue[currentQueueSize].month = _month;
       priorityQueue[currentQueueSize].day = _day;
       priorityQueue[currentQueueSize].cost = _cost;
-      priorityQueue[currentQueueSize].numRepairs = 0;
       repairUpward(currentQueueSize);
       currentQueueSize++;
       return;
