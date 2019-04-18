@@ -11,6 +11,9 @@ struct GroupNode
   int groupSize;
   int month;
   int day;
+  int cost;
+  int numRepairs;
+  //array for query choices
 };
 
 
@@ -53,6 +56,7 @@ class PriorityQueue
     void repairDownward(int nodeIndex);
 
     GroupNode* priorityQueue; //pointer to the array used to implement priority queue
+    GroupNode* returnQueue;
     int currentQueueSize; //number of skis currently in the priority queue
     int maxQueueSize; //maximum capacity of priority queue
 };
