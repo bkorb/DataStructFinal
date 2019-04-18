@@ -9,15 +9,18 @@ PriorityQueue :: PriorityQueue(int queueSize)
 {
   maxQueueSize = queueSize;
   currentQueueSize = 0;
+  currentReturnSize = 0;
   priorityQueue = new GroupNode[queueSize];
+  returnQueue = new GroupNode[queueSize];
 }
 
 PriorityQueue :: ~PriorityQueue()
 {
   delete[] priorityQueue;
+  delete[] returnQueue;
 }
 
-void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int _day)
+void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int _day, int _cost)
 {
   if(!isFull())
   {
@@ -27,6 +30,8 @@ void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int
       priorityQueue[0].groupSize = _groupSize;
       priorityQueue[0].month = _month;
       priorityQueue[0].day = _day;
+      priorityQueue[0].cost = _cost;
+      priorityQueue[0].numRepairs = 0;
       currentQueueSize++;
       return;
     }
@@ -36,6 +41,8 @@ void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int
       priorityQueue[currentQueueSize].groupSize = _groupSize;
       priorityQueue[currentQueueSize].month = _month;
       priorityQueue[currentQueueSize].day = _day;
+      priorityQueue[currentQueueSize].cost = _cost;
+      priorityQueue[currentQueueSize].numRepairs = 0;
       repairUpward(currentQueueSize);
       currentQueueSize++;
       return;
@@ -305,8 +312,9 @@ int main(int argc, char *argv[])
   while(l == 0)
   {
     cout << "============Main Menu============" << endl;
-    cout << "1. Get group information from Inventory" << endl;
-    cout << "2. Add a group to Priority Queue" << endl;
+    cout << "1. Get group information and selection from inventory" << endl;
+    cout << "2. Add a group to Priority Queue, without inventory selection" << endl;
+    // add edit option for groups who havent selected their skis
     cout << "3. Show next group in the queue" << endl;
     cout << "4. Help Next group" << endl;
     cout << "5. Cancel Reservation" << endl;
@@ -339,7 +347,8 @@ int main(int argc, char *argv[])
       cout << "Enter Day in numerical form: ";
       getline(cin, _day);
       cout << endl;
-      queue.enqueue(name, stoi(group), month, stoi(_day));
+      cost = 0;
+      queue.enqueue(name, stoi(group), month, stoi(_day), cost);
       break;
       case 3:
       if(queue.isEmpty())
@@ -351,6 +360,7 @@ int main(int argc, char *argv[])
       cout<<"Group Size: " <<queue.peek().groupSize<<endl;
       cout<<"Month: "<< queue.rankingConverter(queue.peek().month) <<endl;
       cout<<"Day: " <<queue.peek().day<<endl;
+      cout << "Cost: " << queue.peek().cost<<endl;
       break;
       case 4:
       if(queue.isEmpty())
@@ -359,6 +369,7 @@ int main(int argc, char *argv[])
         break;
       }
       cout<<"Group Name: "<<queue.peek().groupName <<endl;
+      cout << "Cost: " << queue.peek().cost<<endl;
       // will display what skis, and how many skis
       queue.dequeue();
       break;
