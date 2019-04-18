@@ -12,7 +12,6 @@ struct GroupNode
   int month;
   int day;
   int cost;
-  int numRepairs;
   //array for query choices
 };
 
