@@ -58,6 +58,7 @@ class PriorityQueue
     GroupNode* priorityQueue; //pointer to the array used to implement priority queue
     GroupNode* returnQueue;
     int currentQueueSize; //number of skis currently in the priority queue
+    int currentReturnSize;
     int maxQueueSize; //maximum capacity of priority queue
 };
 
