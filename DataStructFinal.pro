@@ -17,6 +17,10 @@ QT += widgets
 QT += gui
 
 CONFIG += sdk_no_version_check
+CONFIG+=c++11
 
 #DEFINES = 
+
+DISTFILES += \
+    skis.csv
 

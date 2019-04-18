@@ -3,8 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include "Inventory.hpp"
-//#include <QApplication>
-//#include <QPushButton>
+#include <QApplication>
+#include <QPushButton>
+#include <QString>
+#include <QFile>
+#include <QTextCodec>
+#include <QDebug>
 
 using namespace std;
 
@@ -36,10 +40,45 @@ void readFileIntoInventory(string filename, Inventory &inventory){
 		size = stoi(sizestring);
 		getline(ss, pricestring, ',');
 		price = stoi(pricestring);
+        cout << brand << endl;
 		inventory.addUnit(brand, model, type, size, price, 0);
 		i++;
 	}
 	file.close();
+}
+
+void readFileIntoInventoryQt(string filename, Inventory &inventory){
+    cout << "start" << endl;
+    QFile file(QCoreApplication::applicationDirPath() + QString::fromStdString(filename));
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << file.errorString();
+        return;
+    }
+    string line;
+    QStringList wordList;
+    while (!file.atEnd()) {
+        cout << "line" << endl;
+        QByteArray line = file.readLine();
+        QList<QByteArray> words = line.split(',');
+        string *wordss = new string[words.size()];
+        for(int i = 0; i<words.size(); i++){
+            QString DataAsString = QTextCodec::codecForMib(1015)->toUnicode(words[i]);
+            wordss[i] = DataAsString.toUtf8().constData();
+        }
+        string brand = wordss[0];
+        string model = wordss[1];
+        string types = wordss[2];
+        Type type;
+        if(types=="ski"){
+            type = ski;
+        }else{
+            type = snowboard;
+        }
+        int size = stoi(wordss[3]);
+        int price = stoi(wordss[4]);
+        inventory.addUnit(brand, model, type, size, price, 0);
+    }
+    file.close();
 }
 
 //Function to get user input for a specific parameter
@@ -125,15 +164,25 @@ void makeQuery(Inventory &inventory){
 
 //Main
 int main(int argc, char **argv){
-	Inventory inventory;
-	readFileIntoInventory("skis.csv", inventory);
+    QApplication app (argc, argv);
 
-    /*QApplication app (argc, argv);
+	Inventory inventory;
+    readFileIntoInventoryQt("skis.csv", inventory);
+
 
     QPushButton button ("Hello world !");
     button.show();
 
-    return app.exec();*/
+    int numOptions = 1;
+    string *options = inventory.brands.getQueries(numOptions);
+    cout << numOptions << endl;
+    for(int i = 0; i<numOptions; i++){
+        cout << options[i] << endl;
+        QPushButton *button  = new QPushButton(QString::fromStdString(options[i]));
+        button->show();
+    }
+
+    return app.exec();
 
     while(true){
 		makeQuery(inventory);
