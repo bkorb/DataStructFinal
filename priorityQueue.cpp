@@ -227,7 +227,7 @@ string PriorityQueue :: rankingConverter(int _ranking)
   {
     return "September";
   }
-  if(_ranking == 3)
+  if(_ranking == 2)
   {
     return "October";
   }
