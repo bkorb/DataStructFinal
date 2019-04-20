@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>972</width>
-    <height>662</height>
+    <width>1174</width>
+    <height>1044</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>ShopWindow</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="openButton">
@@ -52,6 +55,9 @@
          <pointsize>8</pointsize>
         </font>
        </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <property name="selectionMode">
         <enum>QAbstractItemView::MultiSelection</enum>
        </property>
@@ -78,22 +84,6 @@
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QListWidget" name="listWidget">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>130</y>
-      <width>411</width>
-      <height>361</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>8514oem</family>
-      <pointsize>8</pointsize>
-     </font>
-    </property>
    </widget>
    <widget class="QWidget" name="">
     <property name="geometry">
@@ -167,41 +157,269 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>100</y>
-      <width>231</width>
-      <height>31</height>
+      <x>332</x>
+      <y>139</y>
+      <width>701</width>
+      <height>401</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Sort by</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="sortCBox"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="searchButton">
-       <property name="text">
-        <string>search</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="font">
+     <font>
+      <family>8514oem</family>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="tabKeyNavigation">
+     <bool>true</bool>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::ExtendedSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
+    <property name="horizontalScrollMode">
+     <enum>QAbstractItemView::ScrollPerPixel</enum>
+    </property>
+    <property name="gridStyle">
+     <enum>Qt::SolidLine</enum>
+    </property>
+    <property name="sortingEnabled">
+     <bool>true</bool>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string>New Row</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>Type</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Brand</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Model</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Size</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Price</string>
+     </property>
+    </column>
+    <item row="0" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="0" column="1">
+     <property name="text">
+      <string>stes</string>
+     </property>
+    </item>
+    <item row="0" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="0" column="3">
+     <property name="text">
+      <string>sets</string>
+     </property>
+    </item>
+    <item row="0" column="4">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="0">
+     <property name="text">
+      <string>stest</string>
+     </property>
+    </item>
+    <item row="1" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="4">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="4">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="4">
+     <property name="text">
+      <string>wttes</string>
+     </property>
+    </item>
+    <item row="4" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="4" column="1">
+     <property name="text">
+      <string>sset</string>
+     </property>
+    </item>
+    <item row="4" column="2">
+     <property name="text">
+      <string>tes</string>
+     </property>
+    </item>
+    <item row="4" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="4" column="4">
+     <property name="text">
+      <string>sette</string>
+     </property>
+    </item>
+    <item row="5" column="0">
+     <property name="text">
+      <string>tes</string>
+     </property>
+    </item>
+    <item row="5" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="5" column="2">
+     <property name="text">
+      <string>wstet</string>
+     </property>
+    </item>
+    <item row="5" column="3">
+     <property name="text">
+      <string>stes</string>
+     </property>
+    </item>
+    <item row="5" column="4">
+     <property name="text">
+      <string>tes</string>
+     </property>
+    </item>
    </widget>
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>500</y>
-      <width>104</width>
+      <x>332</x>
+      <y>543</y>
+      <width>56</width>
       <height>18</height>
      </rect>
     </property>
@@ -228,13 +446,45 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>332</x>
+      <y>102</y>
+      <width>381</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Sort by</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="sortCBox"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="searchButton">
+       <property name="text">
+        <string>search</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>972</width>
+     <width>1174</width>
      <height>26</height>
     </rect>
    </property>

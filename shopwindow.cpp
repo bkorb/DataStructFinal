@@ -5,7 +5,7 @@
 #include <QTextStream>
 
 template <class T>
-T *getParameterArray(ArrayTable<T> &set, int &entries){
+T  *getAllArray(ArrayTable<T> &set, int &entries){
     entries = 0;
     int numOptions = 0;
     T *options = set.getQueries(numOptions);
@@ -13,11 +13,74 @@ T *getParameterArray(ArrayTable<T> &set, int &entries){
     return options;
 }
 
+template <class T>
+T *getParameterArray(QListWidget *table, ArrayTable<T> &set, int &entries){
+    entries = 0;//Number of choices the user gave
+    int numOptions = 0;//Number of options for the user to choose from
+    T *options = set.getQueries(numOptions);//Get a list of options for every type in a table.	for(int i = 0; i<numOptions; i++){
+    int *choices = new int[table->count()];
+    int idx = 0;
+    for (int i = 0; i < table->count(); i++){
+        choices[idx] = -1;
+        if (table->item(i)->isSelected()){
+            entries++;
+            choices[idx] = i;
+            idx++;
+        }
+    }
+    if(choices[0] == -1){//If you want to choose every option
+        entries = 0;//If entries is 0 and parameters is a nullptr the searchUnits function will return all of that type
+        return nullptr;
+    }
+    int num = choices[0];
+    T *parameters = new T[entries];
+    int index = 0;
+    while(index < entries && num != -1){//Streaming in each choice that the user input.
+        parameters[index] = options[choices[index]];
+        index++;
+        num = choices[index];
+    }
+    return parameters;
+}
+
+//TODO Fix a segmentation fault.
+template <class T>
+T *getParameterArray(QComboBox *table, ArrayTable<T> &set, int &entries){
+    entries = 0;//Number of choices the user gave
+    int numOptions = 0;//Number of options for the user to choose from
+    T *options = set.getQueries(numOptions);//Get a list of options for every type in a table.	for(int i = 0; i<numOptions; i++){
+    int *choices = new int[table->count()];
+    if (table->currentIndex() <= 0)
+    {
+        entries = 0;
+        return nullptr;
+    }
+    int idx = 0;
+    for (int i = table->currentIndex() - 1; i < table->count(); i++)
+    {
+        choices[idx] = i;
+        entries++;
+        idx++;
+    }
+
+    int num = choices[0];
+    T *parameters = new T[entries];
+    int index = 0;
+    while(index < entries && num != -1)
+    {
+        parameters[index] = options[choices[index]];
+        index++;
+        num = choices[index];
+    }
+    return parameters;
+}
+
 ShopWindow::ShopWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ShopWindow)
 {
     ui->setupUi(this);
+     ui->tableWidget->clear();
      ui->sizeCBox->addItem("Select...");
      ui->priceCBox->addItem("Select...");
 
@@ -26,7 +89,6 @@ ShopWindow::ShopWindow(QWidget *parent) :
      ui->sortCBox->addItem("Model");
      ui->sortCBox->addItem("Type");
      ui->sortCBox->addItem("Size");
-
 }
 
 ShopWindow::~ShopWindow()
@@ -34,25 +96,33 @@ ShopWindow::~ShopWindow()
     delete ui;
 }
 
+
 void ShopWindow::loadOptions(){
     int numBrands,numModels,numSizes,numPrices;
-    string *brands = getParameterArray<string>(stock.brands,numBrands);
+    string *brands = getAllArray<string>(stock.brands,numBrands);
+    ui->brandLWidget->clear();
     for (int i = 0; i < numBrands; i++){
         QString str = QString::fromStdString(brands[i]);
         ui->brandLWidget->addItem(str);
     }
-    string *models = getParameterArray<string>(stock.models,numModels);
+    string *models = getAllArray<string>(stock.models,numModels);
+    ui->modelLWidget->clear();
     for (int i = 0; i < numModels; i++){
         QString str = QString::fromStdString(models[i]);
         ui->modelLWidget->addItem(str);
     }
+    ui->typeLWidget->clear();
         ui->typeLWidget->addItem("Ski");
         ui->typeLWidget->addItem("Snowboard");
-    int *sizes = getParameterArray(stock.sizes,numSizes);
+    int *sizes = getAllArray(stock.sizes,numSizes);
+    ui->sizeCBox->clear();
+    ui->sizeCBox->addItem("Select...");
     for (int i = 0; i < numSizes; i++){
         ui->sizeCBox->addItem(QString::number(sizes[i]));
     }
-    int *prices = getParameterArray(stock.prices,numPrices);
+    int *prices = getAllArray(stock.prices,numPrices);
+    ui->priceCBox->clear();
+    ui->priceCBox->addItem("Select...");
     for (int i = 0; i < numPrices; i++){
         ui->priceCBox->addItem(QString::number(prices[i]));
     }
@@ -61,20 +131,41 @@ void ShopWindow::loadOptions(){
 Element<Ski>** ShopWindow::searchHelper(int &entries)
 {
     int numBrands, numModels, numTypes, numSizes, numPrices;
-    numBrands = numModels = numTypes = numSizes = numPrices = 0;
-    string *brands = nullptr;//getParameterArray<string>(stock.brands,numBrands);
-    string *models = nullptr;//getParameterArray<string>(stock.models,numModels);
-    Type *types = nullptr;//getParameterArray(stock.types,numTypes);
-    int *sizes = nullptr;//getParameterArray(stock.sizes,numSizes);
-    int *prices = nullptr;//getParameterArray(stock.sizes,numPrices);
+    numSizes =0;
+    numPrices = 0;
+    string *brands = getParameterArray<string>(ui->brandLWidget,stock.brands,numBrands);
+    string *models = getParameterArray<string>(ui->modelLWidget,stock.models,numModels);
+    Type *types = getParameterArray(ui->typeLWidget,stock.types,numTypes);
+    int *sizes = getParameterArray(ui->sizeCBox,stock.sizes,numSizes);
+    int *prices = getParameterArray(ui->priceCBox,stock.prices,numPrices);
 
     return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,entries);
 }
 
+Element<Ski>** ShopWindow::searchAllHelper(int &entries)
+{
+    int numBrands, numModels, numTypes, numSizes, numPrices;
+    numBrands = numModels = numTypes = numSizes = numPrices = 0;
+    string *brands = nullptr;//getParameterArray<string>(stock.brands,numBrands,choices);
+    string *models = nullptr;//getParameterArray<string>(stock.models,numModels,choices);
+    Type *types = nullptr;//getParameterArray(stock.types,numTypes,choices);
+    int *sizes = nullptr;//getParameterArray(stock.sizes,numSizes,choices);
+    int *prices = nullptr;//getParameterArray(stock.prices,numPrices,choices);
+
+    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,entries);
+}
+
+void ShopWindow::clearHelper(){
+   int entries = 0;
+   Element<Ski> **units = searchAllHelper(entries);
+   for (int i = 0; i < entries; i++){
+       stock.removeUnit(units[i]);
+   }
+}
 
 void ShopWindow::on_searchButton_clicked()
 {
-    ui->listWidget->clear();
+    ui->tableWidget->clear();
     int entries = 0;
     Element<Ski> **units = searchHelper(entries);
     int sortIndex = ui->sortCBox->currentIndex();
@@ -92,7 +183,7 @@ void ShopWindow::on_searchButton_clicked()
             sortByType(units,0,entries-1);
         break;
         case 4:
-            sortByPrice(units,0,entries-1);
+            sortBySize(units,0,entries-1);
         break;
     default:
         break;
@@ -102,14 +193,25 @@ void ShopWindow::on_searchButton_clicked()
         string type;
         if (item->data.type == ski) type = "Ski";
         else type = "Board";
-        string info = item->data.brand + " | " + type + " | " + item->data.model + " | " + to_string(item->data.size) + "cm | $" + to_string(item->data.price);
-        ui->listWidget->addItem(QString::fromStdString(info));
+        QStringList dataList;
+        dataList << QString::fromStdString(type)
+                 << QString::fromStdString(item->data.brand)
+                 << QString::fromStdString(item->data.model)
+                 << QString::number(item->data.size) + "cm"
+                 << "$" + QString::number(item->data.price);
+        ui->tableWidget->insertRow(i);
+        for (int j = 0; j < dataList.count(); j++){
+        QTableWidgetItem *itm = new QTableWidgetItem;
+        itm->setText(dataList[j]);
+        ui->tableWidget->setItem(i,j,itm);
+        }
     }
     ui->countLabel->setText(QString::number(entries));
 }
 
 void ShopWindow::on_openButton_clicked()
 {
+    clearHelper();
     QString filename=QFileDialog::getOpenFileName(this,tr("Open File"),
                                                   "C://", "csv files (*.csv)");
     cuteReadInventory(filename);

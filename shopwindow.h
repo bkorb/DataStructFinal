@@ -18,7 +18,6 @@ public:
     ~ShopWindow();
 
 
-
 private slots:
     void on_searchButton_clicked();
 
@@ -28,10 +27,15 @@ private slots:
 
     void loadOptions();
 
+
 private:
     Inventory stock;
+
     Ui::ShopWindow *ui;
     Element<Ski>** searchHelper(int &entries);
+    Element<Ski>** searchAllHelper(int &entries);
+
+    void clearHelper();
 };
 
 #endif // SHOPWINDOW_H
