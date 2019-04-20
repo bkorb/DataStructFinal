@@ -4,7 +4,7 @@
 #include <string>
 #include <cstring>
 
-// a struct to store customers group information
+// a struct to store info
 struct GroupNode
 {
   std::string groupName;
@@ -20,26 +20,34 @@ class PriorityQueue
 {
     public:
 
-    //Purpose: perform all operations necessary to instantiate a class object
     PriorityQueue(int queueSize);
 
-    // Purpose: free all resources that the object has acquired
     ~PriorityQueue();
 
-    // Purpose: enqueue new group into priority queue; call other
-    void enqueue (std::string _groupName, int _groupSize, int _month, int _day);
+    int rentalCost();
 
-    //Purpose: remove the group (allocate the table) at the front of the priority queue from
+    int salesCost();
+
+    void enqueue (std::string _groupName, int _groupSize, int _month, int _day, int _cost);
+
+    //remove the group add group to return queue
     void dequeue();
 
-    // return: groupID of the group at the front of the priority queue
+    void returnEnqueue(std::string _groupName, int _groupSize, int _month, int _day, int _cost);
+
+    void returnDequeue();
+
     GroupNode peek();
 
-    //return: true if queue is full, false otherwise
+    GroupNode returnPeek();
+
     bool isFull();
 
-    // return: true if queue is empty, false otherwise
     bool isEmpty();
+
+    bool isReturnFull();
+
+    bool isReturnEmpty();
 
     int monthConverter(std::string _month); //changes calender values into single digit rankings
 
@@ -48,11 +56,15 @@ class PriorityQueue
     void deleteReservation(std::string groupName, int month, int day); // removes a node in the queue from anywhere
 
     private:
-    //Purpose: maintain heap properties by swapping node with parent if necessary
+    //maintain heap properties
     void repairUpward(int nodeIndex);
 
-    // Purpose: maintain heap properties by swapping node with child if necessary
+    void repairUpwardReturn(int nodeIndex);
+
+    // maintain heap properties
     void repairDownward(int nodeIndex);
+
+    void repairDownwardReturn(int nodeIndex);
 
     GroupNode* priorityQueue; //pointer to the array used to implement priority queue
     GroupNode* returnQueue;
