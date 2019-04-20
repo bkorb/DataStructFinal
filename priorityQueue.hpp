@@ -4,15 +4,22 @@
 #include <string>
 #include <cstring>
 
+using namespace std;
+
 // a struct to store customers group information
-struct GroupNode
+class GroupNode
 {
-  std::string groupName;
-  int groupSize;
-  int month;
-  int day;
-  int cost;
-  //array for query choices
+public:
+    bool operator>(const GroupNode &other);
+    bool operator<(const GroupNode &other);
+    bool operator==(const GroupNode &other);
+    bool operator!=(const GroupNode &other);
+    /*string groupName;
+    int groupSize;
+    int month;
+    int day;
+    int cost;*/
+    //array for query choices
 };
 
 
@@ -27,7 +34,7 @@ class PriorityQueue
     ~PriorityQueue();
 
     // Purpose: enqueue new group into priority queue; call other
-    void enqueue (std::string _groupName, int _groupSize, int _month, int _day);
+    void enqueue (GroupNode node);
 
     //Purpose: remove the group (allocate the table) at the front of the priority queue from
     void dequeue();
@@ -41,11 +48,11 @@ class PriorityQueue
     // return: true if queue is empty, false otherwise
     bool isEmpty();
 
-    int monthConverter(std::string _month); //changes calender values into single digit rankings
+    int monthConverter(string _month); //changes calender values into single digit rankings
 
-    std::string rankingConverter(int _ranking); // reverses the changes in monthConverter()
+    string rankingConverter(int _ranking); // reverses the changes in monthConverter()
 
-    void deleteReservation(std::string groupName, int month, int day); // removes a node in the queue from anywhere
+    void deleteReservation(string groupName, int month, int day); // removes a node in the queue from anywhere
 
     private:
     //Purpose: maintain heap properties by swapping node with parent if necessary
@@ -55,9 +62,7 @@ class PriorityQueue
     void repairDownward(int nodeIndex);
 
     GroupNode* priorityQueue; //pointer to the array used to implement priority queue
-    GroupNode* returnQueue;
     int currentQueueSize; //number of skis currently in the priority queue
-    int currentReturnSize;
     int maxQueueSize; //maximum capacity of priority queue
 };
 

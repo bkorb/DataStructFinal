@@ -11,7 +11,6 @@ PriorityQueue :: PriorityQueue(int queueSize)
   currentQueueSize = 0;
   currentReturnSize = 0;
   priorityQueue = new GroupNode[queueSize];
-  returnQueue = new GroupNode[queueSize];
 }
 
 PriorityQueue :: ~PriorityQueue()
@@ -20,27 +19,29 @@ PriorityQueue :: ~PriorityQueue()
   delete[] returnQueue;
 }
 
-void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int _day, int _cost)
+void PriorityQueue :: enqueue(GroupNode node)
 {
   if(!isFull())
   {
     if(isEmpty())
     {
-      priorityQueue[0].groupName = _groupName;
+      priorityQueue[0] = node;
+      /*priorityQueue[0].groupName = _groupName;
       priorityQueue[0].groupSize = _groupSize;
       priorityQueue[0].month = _month;
       priorityQueue[0].day = _day;
-      priorityQueue[0].cost = _cost;
+      priorityQueue[0].cost = _cost;*/
       currentQueueSize++;
       return;
     }
     else
     {
-      priorityQueue[currentQueueSize].groupName = _groupName;
+      priorityQueue[currentQueueSize] = node;
+      /*priorityQueue[currentQueueSize].groupName = _groupName;
       priorityQueue[currentQueueSize].groupSize = _groupSize;
       priorityQueue[currentQueueSize].month = _month;
       priorityQueue[currentQueueSize].day = _day;
-      priorityQueue[currentQueueSize].cost = _cost;
+      priorityQueue[currentQueueSize].cost = _cost;*/
       repairUpward(currentQueueSize);
       currentQueueSize++;
       return;
@@ -97,14 +98,14 @@ bool PriorityQueue :: isEmpty()
 void PriorityQueue :: repairUpward(int nodeIndex)
 {
   GroupNode temp;
-  while(priorityQueue[nodeIndex].month <= priorityQueue[nodeIndex - 1].month && nodeIndex != 0)
+  while(priorityQueue[nodeIndex] < priorityQueue[nodeIndex - 1] && nodeIndex != 0)
   {
       temp = priorityQueue[nodeIndex - 1];
       priorityQueue[nodeIndex - 1] = priorityQueue[nodeIndex];
       priorityQueue[nodeIndex] = temp;
       nodeIndex--;
   }
-  int i = 0;
+  /*int i = 0;
   while(i != currentQueueSize - 1)
   {
     if(priorityQueue[i].month == priorityQueue[i + 1].month)
@@ -131,14 +132,14 @@ void PriorityQueue :: repairUpward(int nodeIndex)
       }
     }
     i++;
-  }
+  }*/
   return;
 }
 
 void PriorityQueue :: repairDownward(int nodeIndex)
 {
   GroupNode temp;
-  while(priorityQueue[nodeIndex].month > priorityQueue[nodeIndex + 1].month && nodeIndex != currentQueueSize)
+  while(priorityQueue[nodeIndex] > priorityQueue[nodeIndex + 1] && nodeIndex != currentQueueSize)
   {
     temp = priorityQueue[nodeIndex + 1];
     priorityQueue[nodeIndex + 1] = priorityQueue[nodeIndex];
@@ -149,7 +150,7 @@ void PriorityQueue :: repairDownward(int nodeIndex)
   {
     return;
   }
-  int i = 0;
+  /*int i = 0;
   while(i != currentQueueSize)
   {
     if(priorityQueue[i].month == priorityQueue[i + 1].month)
@@ -176,7 +177,7 @@ void PriorityQueue :: repairDownward(int nodeIndex)
       }
     }
     i++;
-  }
+  }*/
   return;
 }
 
@@ -271,6 +272,7 @@ string PriorityQueue :: rankingConverter(int _ranking)
   }
 }
 
+//Still needs to be adjusted
 void PriorityQueue :: deleteReservation(string groupName, int month, int day)
 {
   int test = 0, place = 0;

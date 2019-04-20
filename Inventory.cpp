@@ -40,9 +40,59 @@ Ski::Ski(){
 	costOfRepairs = NULL;
 }
 
+Ski::Ski(string line){
+	istringstream ss(line);
+
+	getline(ss, brand, ',');
+
+	getline(ss, model, ',');
+
+	string stype;
+	getline(ss, stype, ',');
+	if(stype=="ski"){
+		type = ski;
+	}else{
+		type = snowboard;
+	}
+
+	string ssize;
+	getline(ss, ssize, ',');
+	size = stoi(ssize);
+
+	string sprice;
+	getline(ss, sprice, ',');
+	price = stoi(sprice);
+
+	string scost;
+	getline(ss, scost, ',');
+	cost = stoi(scost);
+
+	string srepairs;
+	getline(ss, srepairs, ',');
+	repairs = stoi(srepairs);
+
+	string scostrepairs;
+	getline(ss, scostrepairs, ',');
+	costOfRepairs = stoi(scostrepairs);
+}
+
 //Destructor for Ski class
 Ski::~Ski(){
 	//Nothing to do
+}
+
+string to_string(Type type){
+	if(type==ski){
+		return "ski";
+	}else if(type==snowboard){
+		return "snowboard";
+	}else{
+		return "null";
+	}
+}
+
+string Ski::serialize(){
+	return brand+", "+model+", "+to_string(type)+", "+to_string(size)+", "+to_string(price)+", "+to_string(cost)+", "+to_string(repairs)+", "+to_string(costOfRepairs);
 }
 
 //Function that allows ski objects to be printed
@@ -63,6 +113,169 @@ ostream & operator<<(ostream &Str, const Type &v) {
 	return Str;
 }
 
+bool Reservation::operator==(const Reservation &other){
+	return (this->month == other.month && this->day == other.day && this->groupSize == other.groupSize && this->timestamp == other.timestamp);
+}
+
+bool Reservation::operator!=(const Reservation &other){
+	return !(*this == other);
+}
+
+bool Reservation::operator>(const Reservation &other){
+	if(this->month == other.month){
+		if(this->day == other.day){
+			if(this->groupSize == other.groupSize){
+				return this->timestamp < other.timestamp;
+			}else{
+				return this->groupSize > other.groupSize;
+			}
+		}else{
+			return this->day < other.day;
+		}
+	}else{
+		return this->month < other.month;
+	}
+}
+
+bool Reservation::operator<(const Reservation &other){
+	if(this->month == other.month){
+		if(this->day == other.day){
+			if(this->groupSize == other.groupSize){
+				return this->timestamp > other.timestamp;
+			}else{
+				return this->groupSize < other.groupSize;
+			}
+		}else{
+			return this->day > other.day;
+		}
+	}else{
+		return this->month > other.month;
+	}
+}
+
+string Reservation::serialize(){
+	string ret = "";
+	ret += to_string(month);
+	ret += "; "+to_string(day);
+	ret += "; "+to_string(duration);
+	ret += "; "+to_string(timestamp);
+	ret += "; "+to_string(cost);
+	ret += "; "+to_string(groupSize);
+	for(int i = 0; i<groupSize; i++){
+		ret += "; "+skis[i]->serialize();
+	}
+	return ret;
+}
+
+Reservation::Reservation(string line){
+	istringstream ss(line);
+
+	string smonth;
+	getline(ss, smonth, ';');
+	month = stoi(smonth);
+
+	string sday;
+	getline(ss, sday, ';');
+	day = stoi(sday);
+
+	string sduration;
+	getline(ss, sduration, ';');
+	duration = stoi(sduration);
+
+	string stimestamp;
+	getline(ss, stimestamp, ';');
+	timestamp = stoi(stimestamp);
+
+	string scost;
+	getline(ss, scost, ';');
+	cost = stoi(scost);
+
+	string sgroupSize;
+	getline(ss, sgroupSize, ';');
+	groupSize = stoi(sgroupSize);
+
+	skis = new Element<Ski>*[groupSize];
+
+	for(int i = 0; i<groupSize; i++){
+		string line;
+		getline(ss, line, ';');
+		skis[i] = new Ski(line);
+	}
+}
+
+bool ReturnItem::operator==(const ReturnItem &other){
+	return (this->repairNeeded == other.repairNeeded && this->costOfRepair == other.costOfRepair && this->timestamp == other.timestamp);
+}
+
+bool ReturnItem::operator!=(const ReturnItem &other){
+	return !(*this == other);
+}
+
+bool ReturnItem::operator>(const ReturnItem &other){
+	if(this->repairNeeded == other.repairNeeded){
+		if(this->costOfRepair == other.costOfRepair){
+			return this->timestamp < other.timestamp;
+		}else{
+			return this->costOfRepair < other.costOfRepair;
+		}
+	}else{
+		return !(this->repairNeeded);
+	}
+}
+
+bool ReturnItem::operator<(const ReturnItem &other){
+	if(this->repairNeeded == other.repairNeeded){
+		if(this->costOfRepair == other.costOfRepair){
+			return this->timestamp > other.timestamp;
+		}else{
+			return this->costOfRepair > other.costOfRepair;
+		}
+	}else{
+		return (this->repairNeeded);
+	}
+}
+
+string ReturnItem::serialize(){
+	string ret = "";
+	ret += (repairNeeded)? "1" : "0";
+	ret += "; "+to_string(costOfRepair);
+	ret += "; "+to_string(timestamp);
+	ret += "; "+ski->serialize();
+	return ret;
+}
+
+ReturnItem::ReturnItem(string line){
+	istringstream ss(line);
+
+	string smonth;
+	getline(ss, smonth, ';');
+	month = stoi(smonth);
+
+	string sday;
+	getline(ss, sday, ';');
+	day = stoi(sday);
+
+	string stimestamp;
+	getline(ss, stimestamp, ';');
+	timestamp = stoi(stimestamp);
+
+	string scost;
+	getline(ss, scost, ';');
+	cost = stoi(scost);
+
+	string sgroupSize;
+	getline(ss, sgroupSize, ';');
+	groupSize = stoi(sgroupSize);
+
+	skis = new Element<Ski>*[groupSize];
+
+	for(int i = 0; i<groupSize; i++){
+		string line;
+		getline(ss, line, ';');
+		skis[i] = new Ski(line);
+	}
+}
+
 //Function to add a new unit to the inventory
 void Inventory::addUnit(string brand, string model, Type type, int size, int price, int cost){
 	Ski ski(brand, model, type, size, price, cost);
@@ -73,6 +286,10 @@ void Inventory::addUnit(string brand, string model, Type type, int size, int pri
 void Inventory::addUnit(Ski ski){
 	//cout << "Adding " << ski << endl;
 	ListElement<Ski> *unit = new ListElement<Ski>(ski);
+	addUnit(unit);
+}
+
+void Inventory::addUnit(ListElement<Ski> *unit){
 	units.addElement(unit);
 
 	Element<string> *foundBrand = brands.addElement(Element<string>(ski.brand));
@@ -253,6 +470,73 @@ void Inventory::removeUnit(Element<Ski> *unit){
 
 	Element<int> *price = prices.findElement(Element<int>((listunit->data.price/10)*10));
 	price->deletePointer(listunit);
+}
+
+void Inventory::saveToFile(string filename){
+	ofstream file(filename);
+	ListElement<Ski> *node = units.head;
+	while(node){
+		Ski ski = node->data;
+		string line = ski.serialize();
+		file << line << endl;
+		node = node->next;
+	}
+	file << "BREAK" << endl;
+	while(!orders.isEmpty()){
+		Reservation res = orders.peek();
+		file << res.serialize() << endl;
+		orders.dequeue();
+	}
+	file << "BREAK" << endl;
+	while(!orders.isEmpty()){
+		ReturnItem res = returns.peek();
+		file << res.serialize() << endl;
+		returns.dequeue();
+	}
+	file.close();
+}
+
+//Still needs queue implementation
+void Inventory::loadFromFile(string filename){
+	ifstream file(filename);
+	string line;
+	while(getline(file, line) && line!="BREAK"){
+		Ski ski(line);
+		addUnit(ski);
+	}
+	while(getline(file, line) && line!="BREAK"){
+		Reservation res(line);
+		orders.enqueue(res);
+	}
+	while(getline(file, line)){
+		ReturnItem res(line);
+		returns.enqueue(res);
+	}
+	file.close();
+}
+
+void Inventory::addToOrders(Reservation order){
+	for(int i = 0; i<order.groupSize; i++){
+		removeUnit(order.skis[i]);
+	}
+	orders.enqueue(order);
+}
+
+Reservation Inventory::fillOrder(){
+	Reservation reservation = (Reservation)orders.peek();
+	orders.dequeue();
+	return reservation;
+}
+
+void addToReturns(ReturnItem item){
+	returns.enqueue(item);
+}
+
+Element<Ski> *returnItem(){
+	ReturnItem item = (ReturnItem)returns.peek();
+	returns.dequeue();
+	addUnit(item.ski);
+	return item.ski;
 }
 
 //Helper function to swap two elements of an array

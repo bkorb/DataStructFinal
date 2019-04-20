@@ -126,7 +126,9 @@ void makeQuery(Inventory &inventory){
 //Main
 int main(int argc, char **argv){
 	Inventory inventory;
-	readFileIntoInventory("skis.csv", inventory);
+	inventory.loadFromFile("save1.csv");
+	//readFileIntoInventory("skis.csv", inventory);
+	//inventory.saveToFile("save1.csv");
 
     /*QApplication app (argc, argv);
 
