@@ -4,6 +4,7 @@
 #include <fstream>
 #include "Database.hpp"
 #include "priorityQueue.hpp"
+#include "Trie.hpp"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ public:
 	friend ostream & operator<<(ostream &Str, const Ski &v);
 };
 
-class Reservation: public GroupNode{
+class Reservation{
 public:
 	Element<Ski> **skis;
 	int groupSize;
@@ -39,23 +40,32 @@ public:
 	int duration;
 	int cost;
 	int timestamp;
+	string groupName;
+	bool operator>(const Reservation &other);
+	bool operator<(const Reservation &other);
+	bool operator==(const Reservation &other);
+	bool operator!=(const Reservation &other);
 	string serialize();
-	GroupNode(string line);
-	Reservation(): skis(nullptr), groupSize(-1), month(-1), day(-1), duration(-1), cost(-1), timestamp(-1){}
-	Reservation(Element<Ski> **_skis, int _groupSize, int _month, int _day, int _duration, int _cost, int _timestamp): skis(_skis), groupSize(_groupSize), month(_month), day(_day), duration(_duration), cost(_cost), timestamp(_timestamp){}
-}
+	Reservation(string line);
+	Reservation(): skis(nullptr), groupSize(-1), month(-1), day(-1), duration(-1), cost(-1), timestamp(-1), groupName("null"){}
+	Reservation(Element<Ski> **_skis, int _groupSize, int _month, int _day, int _duration, int _cost, int _timestamp, string _groupName): skis(_skis), groupSize(_groupSize), month(_month), day(_day), duration(_duration), cost(_cost), timestamp(_timestamp), groupName(_groupName){}
+};
 
-class ReturnItem: public GroupNode{
+class ReturnItem{
 public:
 	Element<Ski> *ski;
 	bool repairNeeded;
 	int costOfRepair;
 	int timestamp;
+	bool operator>(const ReturnItem &other);
+	bool operator<(const ReturnItem &other);
+	bool operator==(const ReturnItem &other);
+	bool operator!=(const ReturnItem &other);
 	string serialize();
 	ReturnItem(string line);
 	ReturnItem(): repairNeeded(false), costOfRepair(-1), timestamp(-1){}
 	ReturnItem(bool _repairNeeded, int _costOfRepair, int _timestamp): repairNeeded(_repairNeeded), costOfRepair(_costOfRepair), timestamp(_timestamp){}; 
-}
+};
 
 //Inventory class definition
 class Inventory{
@@ -66,9 +76,9 @@ public:
 	ArrayTable<int> sizes;
 	ArrayTable<int> prices;
 	ListTable<Ski> units;
-	PriorityQueue orders;
-	
-	PriorityQueue returns;
+	PriorityQueue<Reservation> orders;
+	Trie<Reservation> groups;
+	PriorityQueue<ReturnItem> returns;
 	void addUnit(string brand, string model, Type type, int size, int price, int cost);
 	void addUnit(Ski ski);
 	void addUnit(ListElement<Ski> *ski);
@@ -77,8 +87,10 @@ public:
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	void addToOrders(Reservation order);
-	Reservation fillOrder();
-	void addToReturns(Reservation item);
+	void fillOrder();
+	Reservation *findGroup(string groupName, int &entries);
+	void removeFromGroups(Reservation group);
+	void addToReturns(ReturnItem group);
 	Element<Ski> *returnItem();
 };
 

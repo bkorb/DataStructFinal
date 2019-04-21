@@ -33,11 +33,11 @@ Ski::Ski(){
 	brand = "";
 	model = "";
 	type = null;
-	size = NULL;
-	price = NULL;
-	cost = NULL;
-	repairs = NULL;
-	costOfRepairs = NULL;
+	size = -1;
+	price = -1;
+	cost = -1;
+	repairs = -1;
+	costOfRepairs = -1;
 }
 
 Ski::Ski(string line){
@@ -160,9 +160,10 @@ string Reservation::serialize(){
 	ret += "; "+to_string(duration);
 	ret += "; "+to_string(timestamp);
 	ret += "; "+to_string(cost);
+	ret += "; "+groupName;
 	ret += "; "+to_string(groupSize);
 	for(int i = 0; i<groupSize; i++){
-		ret += "; "+skis[i]->serialize();
+		ret += "; "+skis[i]->data.serialize();
 	}
 	return ret;
 }
@@ -190,6 +191,8 @@ Reservation::Reservation(string line){
 	getline(ss, scost, ';');
 	cost = stoi(scost);
 
+	getline(ss, groupName, ';');
+
 	string sgroupSize;
 	getline(ss, sgroupSize, ';');
 	groupSize = stoi(sgroupSize);
@@ -199,7 +202,7 @@ Reservation::Reservation(string line){
 	for(int i = 0; i<groupSize; i++){
 		string line;
 		getline(ss, line, ';');
-		skis[i] = new Ski(line);
+		skis[i] = new Element<Ski>(Ski(line));
 	}
 }
 
@@ -240,40 +243,29 @@ string ReturnItem::serialize(){
 	ret += (repairNeeded)? "1" : "0";
 	ret += "; "+to_string(costOfRepair);
 	ret += "; "+to_string(timestamp);
-	ret += "; "+ski->serialize();
+	ret += "; "+ski->data.serialize();
 	return ret;
 }
 
+//Not done
 ReturnItem::ReturnItem(string line){
 	istringstream ss(line);
 
-	string smonth;
-	getline(ss, smonth, ';');
-	month = stoi(smonth);
+	string srepairNeeded;
+	getline(ss, srepairNeeded, ';');
+	repairNeeded = (srepairNeeded=="1");
 
-	string sday;
-	getline(ss, sday, ';');
-	day = stoi(sday);
+	string scostOfRepair;
+	getline(ss, scostOfRepair, ';');
+	costOfRepair = stoi(scostOfRepair);
 
 	string stimestamp;
 	getline(ss, stimestamp, ';');
 	timestamp = stoi(stimestamp);
 
-	string scost;
-	getline(ss, scost, ';');
-	cost = stoi(scost);
-
-	string sgroupSize;
-	getline(ss, sgroupSize, ';');
-	groupSize = stoi(sgroupSize);
-
-	skis = new Element<Ski>*[groupSize];
-
-	for(int i = 0; i<groupSize; i++){
-		string line;
-		getline(ss, line, ';');
-		skis[i] = new Ski(line);
-	}
+	string sski;
+	getline(ss, sski, ';');
+	ski = new Element<Ski>(Ski(sski));
 }
 
 //Function to add a new unit to the inventory
@@ -292,19 +284,19 @@ void Inventory::addUnit(Ski ski){
 void Inventory::addUnit(ListElement<Ski> *unit){
 	units.addElement(unit);
 
-	Element<string> *foundBrand = brands.addElement(Element<string>(ski.brand));
+	Element<string> *foundBrand = brands.addElement(Element<string>(unit->data.brand));
 	foundBrand->addPointer(unit);
 
-	Element<string> *foundModel = models.addElement(Element<string>(ski.model));
+	Element<string> *foundModel = models.addElement(Element<string>(unit->data.model));
 	foundModel->addPointer(unit);
 
-	Element<Type> *foundType = types.addElement(Element<Type>(ski.type));
+	Element<Type> *foundType = types.addElement(Element<Type>(unit->data.type));
 	foundType->addPointer(unit);
 
-	Element<int> *foundSize = sizes.addElement(Element<int>((ski.size/10)*10));
+	Element<int> *foundSize = sizes.addElement(Element<int>((unit->data.size/10)*10));
 	foundSize->addPointer(unit);
 
-	Element<int> *foundPrice = prices.addElement(Element<int>((ski.price/10)*10));
+	Element<int> *foundPrice = prices.addElement(Element<int>((unit->data.price/10)*10));
 	foundPrice->addPointer(unit);
 }
 
@@ -522,20 +514,28 @@ void Inventory::addToOrders(Reservation order){
 	orders.enqueue(order);
 }
 
-Reservation Inventory::fillOrder(){
+void Inventory::fillOrder(){
 	Reservation reservation = (Reservation)orders.peek();
 	orders.dequeue();
-	return reservation;
+	groups.insert(reservation.groupName, reservation);
 }
 
-void addToReturns(ReturnItem item){
+Reservation *Inventory::findGroup(string groupName, int &entries){
+	return groups.search(groupName, entries);
+}
+
+void Inventory::removeFromGroups(Reservation group){
+	groups.remove(group.groupName, group);
+}
+
+void Inventory::addToReturns(ReturnItem item){
 	returns.enqueue(item);
 }
 
-Element<Ski> *returnItem(){
+Element<Ski> *Inventory::returnItem(){
 	ReturnItem item = (ReturnItem)returns.peek();
 	returns.dequeue();
-	addUnit(item.ski);
+	addUnit((ListElement<Ski> *)item.ski);
 	return item.ski;
 }
 
@@ -559,7 +559,7 @@ void sortByBrand(Element<Ski> **&units, int low, int high){
 		}
 		swapElements(units[i], units[high]);
 		sortByBrand(units, low, i-1); 
-	    sortByBrand(units, i+1, high);
+		sortByBrand(units, i+1, high);
 	}
 }
 
@@ -576,7 +576,7 @@ void sortByModel(Element<Ski> **&units, int low, int high){
 		}
 		swapElements(units[i], units[high]);
 		sortByModel(units, low, i-1); 
-	    sortByModel(units, i+1, high);
+		sortByModel(units, i+1, high);
 	}
 }
 
@@ -593,7 +593,7 @@ void sortByType(Element<Ski> **&units, int low, int high){
 		}
 		swapElements(units[i], units[high]);
 		sortByType(units, low, i-1); 
-	    sortByType(units, i+1, high);
+		sortByType(units, i+1, high);
 	}
 }
 
@@ -610,7 +610,7 @@ void sortBySize(Element<Ski> **&units, int low, int high){
 		}
 		swapElements(units[i], units[high]);
 		sortBySize(units, low, i-1); 
-	    sortBySize(units, i+1, high);
+		sortBySize(units, i+1, high);
 	}
 }
 
@@ -627,6 +627,6 @@ void sortByPrice(Element<Ski> **&units, int low, int high){
 		}
 		swapElements(units[i], units[high]);
 		sortByPrice(units, low, i-1); 
-	    sortByPrice(units, i+1, high);
+		sortByPrice(units, i+1, high);
 	}
 }

@@ -125,8 +125,8 @@ void makeQuery(Inventory &inventory){
 
 //Main
 int main(int argc, char **argv){
-	Inventory inventory;
-	inventory.loadFromFile("save1.csv");
+	//Inventory inventory;
+	//inventory.loadFromFile("save1.csv");
 	//readFileIntoInventory("skis.csv", inventory);
 	//inventory.saveToFile("save1.csv");
 
@@ -137,8 +137,41 @@ int main(int argc, char **argv){
 
     return app.exec();*/
 
-    while(true){
+    /*while(true){
 		makeQuery(inventory);
+	}*/
+	cout << "start" << endl;
+	Trie<string> test(26);
+	test.insert("cat", "feline");
+	test.insert("cat", "kitty");
+	test.insert("cougar", "feline2");
+	test.insert("dog", "canine");
+	test.insert("human", "homosapien");
+	test.insert("tree", "arbol");
+	cout << "inserted" << endl;
+	int entries;
+	string *ret = test.search("c", entries);
+	for(int i = 0; i<entries; i++){
+		cout << ret[i] << endl;
 	}
+	test.remove("cat", "kitty");
+	cout << endl;
+	ret = test.search("c", entries);
+	for(int i = 0; i<entries; i++){
+		cout << ret[i] << endl;
+	}
+	test.remove("cougar", "feline2");
+	cout << endl;
+	ret = test.search("c", entries);
+	for(int i = 0; i<entries; i++){
+		cout << ret[i] << endl;
+	}
+	test.remove("cat", "feline");
+	cout << endl;
+	ret = test.search("c", entries);
+	for(int i = 0; i<entries; i++){
+		cout << ret[i] << endl;
+	}
+
 	return 0;
 }
