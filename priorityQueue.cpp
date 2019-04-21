@@ -1,3 +1,44 @@
+
+
+int salesCost(Element<Ski> *&unit)
+{
+	int sale;
+	if(unit -> data.costOfRepairs != 0)
+	{
+		if(unit -> data.costOfRepairs > 20)
+		{
+			sale = (unit -> data.cost * 0.60)/((1/20)* unit -> data.costOfRepairs);
+			return sale;
+		}
+		else if(unit -> data.costOfRepairs > 10)
+		{
+			sale = (unit -> data.cost * 0.60)/((1/10)* unit -> data.costOfRepairs);
+			return sale;
+		}
+		else
+		{
+			sale = (unit -> data.cost * 0.60)/((1/5)* unit -> data.costOfRepairs);
+			return sale;
+		}
+	}
+	else sale = (unit -> data.cost * 0.60)
+	return sale;
+}
+
+int rentalPrice(Element<Ski> **&skis, int groupSize, int duration)
+{
+	int price = 0;
+	for(int i = 0; i < groupSize; i++)
+	{
+		price = price + skis[i]->data.price;
+	}
+	price = price * duration;
+	return price;
+}
+
+
+
+
 #include <iostream>
 #include <string>
 #include "priorityQueue.hpp"
