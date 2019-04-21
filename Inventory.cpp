@@ -92,7 +92,7 @@ string to_string(Type type){
 }
 
 string Ski::serialize(){
-	return brand+", "+model+", "+to_string(type)+", "+to_string(size)+", "+to_string(price)+", "+to_string(cost)+", "+to_string(repairs)+", "+to_string(costOfRepairs);
+	return brand+","+model+","+to_string(type)+","+to_string(size)+","+to_string(price)+","+to_string(cost)+","+to_string(repairs)+","+to_string(costOfRepairs);
 }
 
 //Function that allows ski objects to be printed
@@ -156,14 +156,14 @@ bool Reservation::operator<(const Reservation &other){
 string Reservation::serialize(){
 	string ret = "";
 	ret += to_string(month);
-	ret += "; "+to_string(day);
-	ret += "; "+to_string(duration);
-	ret += "; "+to_string(timestamp);
-	ret += "; "+to_string(cost);
-	ret += "; "+groupName;
-	ret += "; "+to_string(groupSize);
+	ret += ";"+to_string(day);
+	ret += ";"+to_string(duration);
+	ret += ";"+to_string(timestamp);
+	ret += ";"+to_string(cost);
+	ret += ";"+groupName;
+	ret += ";"+to_string(groupSize);
 	for(int i = 0; i<groupSize; i++){
-		ret += "; "+skis[i]->data.serialize();
+		ret += ";"+skis[i]->data.serialize();
 	}
 	return ret;
 }
@@ -241,9 +241,9 @@ bool ReturnItem::operator<(const ReturnItem &other){
 string ReturnItem::serialize(){
 	string ret = "";
 	ret += (repairNeeded)? "1" : "0";
-	ret += "; "+to_string(costOfRepair);
-	ret += "; "+to_string(timestamp);
-	ret += "; "+ski->data.serialize();
+	ret += ";"+to_string(costOfRepair);
+	ret += ";"+to_string(timestamp);
+	ret += ";"+ski->data.serialize();
 	return ret;
 }
 
@@ -629,4 +629,40 @@ void sortByPrice(Element<Ski> **&units, int low, int high){
 		sortByPrice(units, low, i-1); 
 		sortByPrice(units, i+1, high);
 	}
+}
+
+int salesCost(Ski unit)
+{
+	double sale;
+	if(unit.costOfRepairs != 0)
+	{
+		if(unit.costOfRepairs > 20)
+		{
+			sale = (unit.cost * 0.60)/((1/20)* unit.costOfRepairs);
+			return sale;
+		}
+		else if(unit.costOfRepairs > 10)
+		{
+			sale = (unit.cost * 0.60)/((1/10)* unit.costOfRepairs);
+			return sale;
+		}
+		else
+		{
+			sale = (unit.cost * 0.60)/((1/5)* unit.costOfRepairs);
+			return sale;
+		}
+	}
+	else sale = (unit.cost * 0.60);
+	return (int)sale;
+}
+
+int rentalPrice(Reservation res)
+{
+	int price = 0;
+	for(int i = 0; i < res.groupSize; i++)
+	{
+		price = price + res.skis[i]->data.price;
+	}
+	price = price * res.duration;
+	return price;
 }

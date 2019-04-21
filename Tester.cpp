@@ -121,12 +121,22 @@ void makeQuery(Inventory &inventory){
 	for(int i = 0; i<entries; i++){
 		cout << i+1 << ". " << units[i]->data << endl;
 	}
+	cout << "Choose a ski" << endl;
+	getline(cin, choice);
+	decision = stoi(choice);
+	Element<Ski> *unit = units[decision-1];
+	Element<Ski> **arr = new Element<Ski>*[1];
+	arr[0] = unit;
+	Reservation res(arr, 1, 1, 1, 7, -1, 10, "Me");
+	res.cost = rentalPrice(res);
+	inventory.addToOrders(res);
+	inventory.saveToFile("save1.csv");
 }
 
 //Main
 int main(int argc, char **argv){
-	//Inventory inventory;
-	//inventory.loadFromFile("save1.csv");
+	Inventory inventory;
+	inventory.loadFromFile("save1.csv");
 	//readFileIntoInventory("skis.csv", inventory);
 	//inventory.saveToFile("save1.csv");
 
@@ -137,10 +147,10 @@ int main(int argc, char **argv){
 
     return app.exec();*/
 
-    /*while(true){
+    while(true){
 		makeQuery(inventory);
-	}*/
-	cout << "start" << endl;
+	}
+	/*cout << "start" << endl;
 	Trie<string> test(26);
 	test.insert("cat", "feline");
 	test.insert("cat", "kitty");
@@ -171,7 +181,7 @@ int main(int argc, char **argv){
 	ret = test.search("c", entries);
 	for(int i = 0; i<entries; i++){
 		cout << ret[i] << endl;
-	}
+	}*/
 
 	return 0;
 }

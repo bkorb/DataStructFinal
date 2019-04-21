@@ -14,6 +14,8 @@ class PriorityQueue
 		//Purpose: perform all operations necessary to instantiate a class object
 		PriorityQueue(int queueSize);
 
+		PriorityQueue();
+
 		// Purpose: free all resources that the object has acquired
 		~PriorityQueue();
 
@@ -56,6 +58,14 @@ PriorityQueue<T> :: PriorityQueue(int queueSize)
 	maxQueueSize = queueSize;
 	currentQueueSize = 0;
 	priorityQueue = new T[queueSize];
+}
+
+template <class T>
+PriorityQueue<T> :: PriorityQueue()
+{
+	maxQueueSize = 1000;
+	currentQueueSize = 0;
+	priorityQueue = new T[1000];
 }
 
 template <class T>

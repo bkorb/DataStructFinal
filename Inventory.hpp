@@ -103,3 +103,6 @@ void sortByBrand(Element<Ski> **&units, int low, int high);
 void sortByType(Element<Ski> **&units, int low, int high);
 void sortBySize(Element<Ski> **&units, int low, int high);
 void sortByPrice(Element<Ski> **&units, int low, int high);
+
+int salesCost(Ski unit);
+int rentalPrice(Reservation res);

@@ -32,6 +32,7 @@ public:
 	T *search(string key, int &entries);
 	void remove(string key, T data);
 	Trie(int _size);
+	Trie();
 	~Trie();
 };
 
@@ -50,6 +51,15 @@ TrieNode<T>::TrieNode(int _size, char _value){
 template <class T>
 Trie<T>::Trie(int _size){
 	size = _size;
+	children = new TrieNode<T>*[size];
+	for(int i = 0; i<size; i++){
+		children[i] = nullptr;
+	}
+}
+
+template <class T>
+Trie<T>::Trie(){
+	size = 26;
 	children = new TrieNode<T>*[size];
 	for(int i = 0; i<size; i++){
 		children[i] = nullptr;
