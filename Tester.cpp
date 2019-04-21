@@ -167,7 +167,13 @@ int main(int argc, char **argv){
     QApplication app (argc, argv);
 
 	Inventory inventory;
+<<<<<<< HEAD
     readFileIntoInventoryQt("skis.csv", inventory);
+=======
+	inventory.loadFromFile("save1.csv");
+	//readFileIntoInventory("skis.csv", inventory);
+	//inventory.saveToFile("save1.csv");
+>>>>>>> 5a9281ad6d3f399cd6fcf474bcb4053cf6f16a80
 
 
     QPushButton button ("Hello world !");
