@@ -1,4 +1,44 @@
 
+
+int salesCost(Element<Ski> *&unit)
+{
+	int sale;
+	if(unit -> data.costOfRepairs != 0)
+	{
+		if(unit -> data.costOfRepairs > 20)
+		{
+			sale = (unit -> data.cost * 0.60)/((1/20)* unit -> data.costOfRepairs);
+			return sale;
+		}
+		else if(unit -> data.costOfRepairs > 10)
+		{
+			sale = (unit -> data.cost * 0.60)/((1/10)* unit -> data.costOfRepairs);
+			return sale;
+		}
+		else
+		{
+			sale = (unit -> data.cost * 0.60)/((1/5)* unit -> data.costOfRepairs);
+			return sale;
+		}
+	}
+	else sale = (unit -> data.cost * 0.60)
+	return sale;
+}
+
+int rentalPrice(Element<Ski> **&skis, int groupSize, int duration)
+{
+	int price = 0;
+	for(int i = 0; i < groupSize; i++)
+	{
+		price = price + skis[i]->data.price;
+	}
+	price = price * duration;
+	return price;
+}
+
+
+
+
 #include <iostream>
 #include <string>
 #include "priorityQueue.hpp"
@@ -11,6 +51,7 @@ PriorityQueue :: PriorityQueue(int queueSize)
   currentQueueSize = 0;
   currentReturnSize = 0;
   priorityQueue = new GroupNode[queueSize];
+  returnQueue = new GroupNode[queueSize];
 }
 
 PriorityQueue :: ~PriorityQueue()
@@ -19,29 +60,37 @@ PriorityQueue :: ~PriorityQueue()
   delete[] returnQueue;
 }
 
-void PriorityQueue :: enqueue(GroupNode node)
+int PriorityQueue :: rentalCost()
+{
+
+}
+
+int PriorityQueue :: salesCost()
+{
+
+}
+
+void PriorityQueue :: enqueue(string _groupName, int _groupSize, int _month, int _day, int _cost)
 {
   if(!isFull())
   {
     if(isEmpty())
     {
-      priorityQueue[0] = node;
-      /*priorityQueue[0].groupName = _groupName;
+      priorityQueue[0].groupName = _groupName;
       priorityQueue[0].groupSize = _groupSize;
       priorityQueue[0].month = _month;
       priorityQueue[0].day = _day;
-      priorityQueue[0].cost = _cost;*/
+      priorityQueue[0].cost = _cost;
       currentQueueSize++;
       return;
     }
     else
     {
-      priorityQueue[currentQueueSize] = node;
-      /*priorityQueue[currentQueueSize].groupName = _groupName;
+      priorityQueue[currentQueueSize].groupName = _groupName;
       priorityQueue[currentQueueSize].groupSize = _groupSize;
       priorityQueue[currentQueueSize].month = _month;
       priorityQueue[currentQueueSize].day = _day;
-      priorityQueue[currentQueueSize].cost = _cost;*/
+      priorityQueue[currentQueueSize].cost = _cost;
       repairUpward(currentQueueSize);
       currentQueueSize++;
       return;
@@ -69,6 +118,54 @@ void PriorityQueue :: dequeue()
     return;
   }
 }
+void PriorityQueue :: returnEnqueue(string _groupName, int _groupSize, int _month, int _day, int _cost)
+{
+  if(!isReturnFull())
+  {
+    if(isReturnEmpty())
+    {
+      returnQueue[0].groupName = _groupName;
+      returnQueue[0].groupSize = _groupSize;
+      returnQueue[0].month = _month;
+      returnQueue[0].day = _day;
+      returnQueue[0].cost = _cost;
+      currentReturnSize++;
+      return;
+    }
+    else
+    {
+      returnQueue[currentQueueSize].groupName = _groupName;
+      returnQueue[currentQueueSize].groupSize = _groupSize;
+      returnQueue[currentQueueSize].month = _month;
+      returnQueue[currentQueueSize].day = _day;
+      returnQueue[currentQueueSize].cost = _cost;
+      repairUpwardReturn(currentReturnSize);
+      currentReturnSize++;
+      return;
+    }
+  }
+  else
+  {
+    cout << "Return queue full, cannot enqueue" << endl;
+    return;
+  }
+}
+
+void PriorityQueue :: returnDequeue()
+{
+  if(!isReturnEmpty())
+  {
+    currentReturnSize--;
+    returnQueue[0] = returnQueue[currentReturnSize];
+    repairDownwardReturn(0);
+    return;
+  }
+  else
+  {
+    cout << "Return queue empty, cannot dequeue" << endl;
+    return;
+  }
+}
 
 GroupNode PriorityQueue :: peek()
 {
@@ -78,8 +175,21 @@ GroupNode PriorityQueue :: peek()
   }
   else
   {
-    cout << "Heap empty, nothing to peek" << endl;
+    cout << "Queue empty, nothing to peek" << endl;
     return priorityQueue[0];
+  }
+}
+
+GroupNode PriorityQueue :: returnPeek()
+{
+  if(!isReturnEmpty())
+  {
+    return returnQueue[0];
+  }
+  else
+  {
+    cout << "Return queue empty, nothing to peek" << endl;
+    return returnQueue[0];
   }
 }
 
@@ -95,17 +205,29 @@ bool PriorityQueue :: isEmpty()
  else return false;
 }
 
+bool PriorityQueue :: isReturnFull()
+{
+  if(currentReturnSize == maxQueueSize) return true;
+  else return false;
+}
+
+bool PriorityQueue :: isReturnEmpty()
+{
+ if(currentReturnSize == 0) return true;
+ else return false;
+}
+
 void PriorityQueue :: repairUpward(int nodeIndex)
 {
   GroupNode temp;
-  while(priorityQueue[nodeIndex] < priorityQueue[nodeIndex - 1] && nodeIndex != 0)
+  while(priorityQueue[nodeIndex].month <= priorityQueue[nodeIndex - 1].month && nodeIndex != 0)
   {
       temp = priorityQueue[nodeIndex - 1];
       priorityQueue[nodeIndex - 1] = priorityQueue[nodeIndex];
       priorityQueue[nodeIndex] = temp;
       nodeIndex--;
   }
-  /*int i = 0;
+  int i = 0;
   while(i != currentQueueSize - 1)
   {
     if(priorityQueue[i].month == priorityQueue[i + 1].month)
@@ -132,14 +254,41 @@ void PriorityQueue :: repairUpward(int nodeIndex)
       }
     }
     i++;
-  }*/
+  }
+  return;
+}
+
+void PriorityQueue :: repairUpwardReturn(int nodeIndex)
+{
+  GroupNode temp;
+  while(returnQueue[nodeIndex].month <= returnQueue[nodeIndex - 1].month && nodeIndex != 0)
+  {
+      temp = returnQueue[nodeIndex - 1];
+      returnQueue[nodeIndex - 1] = returnQueue[nodeIndex];
+      returnQueue[nodeIndex] = temp;
+      nodeIndex--;
+  }
+  int i = 0;
+  while(i != currentReturnSize - 1)
+  {
+    if(returnQueue[i].month == returnQueue[i + 1].month)
+    {
+      if(returnQueue[i].day > returnQueue[i + 1].day)
+      {
+        temp = returnQueue[i + 1];
+        returnQueue[i + 1] = returnQueue[i];
+        returnQueue[i] = temp;
+      }
+    }
+    i++;
+  }
   return;
 }
 
 void PriorityQueue :: repairDownward(int nodeIndex)
 {
   GroupNode temp;
-  while(priorityQueue[nodeIndex] > priorityQueue[nodeIndex + 1] && nodeIndex != currentQueueSize)
+  while(priorityQueue[nodeIndex].month > priorityQueue[nodeIndex + 1].month && nodeIndex != currentQueueSize)
   {
     temp = priorityQueue[nodeIndex + 1];
     priorityQueue[nodeIndex + 1] = priorityQueue[nodeIndex];
@@ -150,7 +299,7 @@ void PriorityQueue :: repairDownward(int nodeIndex)
   {
     return;
   }
-  /*int i = 0;
+  int i = 0;
   while(i != currentQueueSize)
   {
     if(priorityQueue[i].month == priorityQueue[i + 1].month)
@@ -177,7 +326,38 @@ void PriorityQueue :: repairDownward(int nodeIndex)
       }
     }
     i++;
-  }*/
+  }
+  return;
+}
+
+void PriorityQueue :: repairDownwardReturn(int nodeIndex)
+{
+  GroupNode temp;
+  while(returnQueue[nodeIndex].month > returnQueue[nodeIndex + 1].month && nodeIndex != currentReturnSize)
+  {
+    temp = returnQueue[nodeIndex + 1];
+    returnQueue[nodeIndex + 1] = returnQueue[nodeIndex];
+    returnQueue[nodeIndex] = temp;
+    nodeIndex++;
+  }
+  if(currentReturnSize == 2)
+  {
+    return;
+  }
+  int i = 0;
+  while(i != currentReturnSize)
+  {
+    if(returnQueue[i].month == returnQueue[i + 1].month)
+    {
+      if(returnQueue[i].day > returnQueue[i + 1].day)
+      {
+        temp = returnQueue[i + 1];
+        returnQueue[i + 1] = returnQueue[i];
+        returnQueue[i] = temp;
+      }
+    }
+    i++;
+  }
   return;
 }
 
@@ -272,7 +452,6 @@ string PriorityQueue :: rankingConverter(int _ranking)
   }
 }
 
-//Still needs to be adjusted
 void PriorityQueue :: deleteReservation(string groupName, int month, int day)
 {
   int test = 0, place = 0;
@@ -308,7 +487,7 @@ int main(int argc, char *argv[])
 {
   PriorityQueue queue = PriorityQueue(stoi(argv[1]));
   string name, group, _month, _day;
-  int l = 0, c = 0, month = 0;
+  int l = 0, c = 0, month = 0, cost = 0;
   while(l == 0)
   {
     cout << "============Main Menu============" << endl;
@@ -318,7 +497,8 @@ int main(int argc, char *argv[])
     cout << "3. Show next group in the queue" << endl;
     cout << "4. Help Next group" << endl;
     cout << "5. Cancel Reservation" << endl;
-    cout << "6. Quit" << endl;
+    cout << "6. Fullfil Return" << endl;
+    cout << "7. Quit" << endl;
     cin >> c;
     switch (c)
     {
@@ -350,6 +530,7 @@ int main(int argc, char *argv[])
       cost = 0;
       queue.enqueue(name, stoi(group), month, stoi(_day), cost);
       break;
+
       case 3:
       if(queue.isEmpty())
       {
@@ -362,17 +543,29 @@ int main(int argc, char *argv[])
       cout<<"Day: " <<queue.peek().day<<endl;
       cout << "Cost: " << queue.peek().cost<<endl;
       break;
+
       case 4:
       if(queue.isEmpty())
       {
         cout << "Queue empty, cannot dequeue" << endl;
         break;
       }
+      cin.ignore();
       cout<<"Group Name: "<<queue.peek().groupName <<endl;
       cout << "Cost: " << queue.peek().cost<<endl;
+
       // will display what skis, and how many skis
+
+      cout << "Enter a month not in numerical form for return: ";
+      getline(cin, _month);
+      cout << endl;
+      month = queue.monthConverter(_month);
+      cout << "Enter a day in numerical form for return: ";
+      getline(cin, _day);
+      queue.returnEnqueue(queue.peek().groupName, queue.peek().groupSize, month, stoi(_day), queue.peek().cost);
       queue.dequeue();
       break;
+
       case 5:
       if(queue.isEmpty())
       {
@@ -395,7 +588,23 @@ int main(int argc, char *argv[])
         queue.deleteReservation(name, month, stoi(_day));
         break;
       }
+
       case 6:
+      if(queue.isReturnEmpty())
+      {
+        cout << "Return queue empty, cannot dequeue" << endl;
+        break;
+      }
+      cout<<"Group Name: "<<queue.returnPeek().groupName <<endl;
+      cout << "Cost: " << queue.returnPeek().cost<<endl;
+      for(int i = 0; i < queue.returnPeek().groupSize; i++)
+      {
+        //display each ski Element, then prompt user to say if it needs a repair or not.
+      }
+      cout << "Process Complete" << endl;
+      break;
+
+      case 7:
       cout << "Goodbye!" << endl;
       if(!queue.isEmpty())
       {
