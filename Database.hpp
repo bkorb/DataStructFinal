@@ -63,6 +63,7 @@ public:
 	~ListTable();
 	void addElement(ListElement<T> *element);
 	void deleteElement(ListElement<T> *element);
+	ListElement<T> *findElement(T data);
 };
 
 //Default constructor for Element class
@@ -384,4 +385,16 @@ void ListTable<T>::deleteElement(ListElement<T> *element){
 		}
 		element->prev->next = element->next;
 	}
+}
+
+template <class T>
+ListElement<T> *ListTable<T>::findElement(T data){
+	ListElement<T> *node = head;
+	while(node){
+		if(node->data==data){
+			return node;
+		}
+		node = node->next;
+	}
+	return nullptr;
 }
