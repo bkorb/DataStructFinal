@@ -729,8 +729,8 @@ void Inventory::removeUnit(Element<Ski> *unit){
 	price->deletePointer(listunit);
 }
 
-void Inventory::saveToFile(string filename){
-	ofstream file(filename);
+string Inventory::saveToFile(){
+    stringstream file;
 	ListElement<Ski> *node = units.head;
 	while(node){
 		string line = node->data.serialize();
@@ -745,13 +745,12 @@ void Inventory::saveToFile(string filename){
 	file << groups.serialize();
 	file << "BREAK" << endl;
 	file << id;
-	file.close();
+    return file.str();
 }
 
 //Still needs queue implementation
-void Inventory::loadFromFile(string filename){
-	ifstream file(filename);
-	string line;
+void Inventory::loadFromFile(stringstream &file){
+        string line;
 	while(getline(file, line) && line!="BREAK"){
 		Ski ski(line);
 		addUnit(ski);
@@ -777,7 +776,6 @@ void Inventory::loadFromFile(string filename){
 	string sid;
 	getline(file, sid);
 	id = stoi(sid);
-	file.close();
 }
 
 void Inventory::addToOrders(Reservation order){

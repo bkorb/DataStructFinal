@@ -25,7 +25,7 @@ void cuteReadInventory(Inventory &inventory){
       size = row[3].toInt();
       price = row[4].toInt();
 
-      inventory.addUnit(brand,model,type,size,price,0);
+      .addUnit(brand,model,type,size,price,0);
      }
     }
 }

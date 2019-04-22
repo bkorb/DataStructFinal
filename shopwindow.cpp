@@ -1,5 +1,6 @@
 #include "shopwindow.h"
 #include "ui_shopwindow.h"
+#include <sstream>
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
@@ -81,8 +82,6 @@ ShopWindow::ShopWindow(QWidget *parent) :
 {
     ui->setupUi(this);
      ui->tableWidget->clear();
-     ui->sizeCBox->addItem("Select...");
-     ui->priceCBox->addItem("Select...");
 
      ui->sortCBox->addItem("Price");
      ui->sortCBox->addItem("Brand");
@@ -111,21 +110,11 @@ void ShopWindow::loadOptions(){
         QString str = QString::fromStdString(models[i]);
         ui->modelLWidget->addItem(str);
     }
-    ui->typeLWidget->clear();
-        ui->typeLWidget->addItem("Ski");
-        ui->typeLWidget->addItem("Snowboard");
-    int *sizes = getAllArray(stock.sizes,numSizes);
-    ui->sizeCBox->clear();
-    ui->sizeCBox->addItem("Select...");
-    for (int i = 0; i < numSizes; i++){
-        ui->sizeCBox->addItem(QString::number(sizes[i]));
-    }
-    int *prices = getAllArray(stock.prices,numPrices);
-    ui->priceCBox->clear();
-    ui->priceCBox->addItem("Select...");
-    for (int i = 0; i < numPrices; i++){
-        ui->priceCBox->addItem(QString::number(prices[i]));
-    }
+
+    ui->sizeMin->setText("0");
+    ui->sizeMax->setText("1000");
+    ui->priceMin->setText("0");
+    ui->priceMax->setText("1000");
 }
 
 Element<Ski>** ShopWindow::searchHelper(int &entries)
@@ -135,11 +124,68 @@ Element<Ski>** ShopWindow::searchHelper(int &entries)
     numPrices = 0;
     string *brands = getParameterArray<string>(ui->brandLWidget,stock.brands,numBrands);
     string *models = getParameterArray<string>(ui->modelLWidget,stock.models,numModels);
-    Type *types = getParameterArray(ui->typeLWidget,stock.types,numTypes);
-    int *sizes = getParameterArray(ui->sizeCBox,stock.sizes,numSizes);
-    int *prices = getParameterArray(ui->priceCBox,stock.prices,numPrices);
 
-    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,entries);
+    //Type *types = getParameterArray(ui->typeLWidget,stock.types,numTypes);
+    numTypes = 0;
+    Type *types = new Type[2];
+    if(ui->checkSki->isChecked()){
+        types[numTypes] = ski;
+        numTypes++;
+    }
+    if(ui->checkSnowboard->isChecked()){
+        types[numTypes] = snowboard;
+        numTypes++;
+    }
+
+    numSizes = 0;
+    int numSizeOptions;
+    int *allsizes = getAllArray(stock.sizes,numSizeOptions);
+    int sizemin = stoi(ui->sizeMin->toPlainText().toStdString());
+    int sizemax = stoi(ui->sizeMax->toPlainText().toStdString());
+    int *sizes = new int[numSizeOptions];
+    if(ui->sizeMin->toPlainText()!="" && ui->sizeMin->toPlainText()!=""){
+        for(int i = 0; i<numSizeOptions; i++){
+            if(allsizes[i]>sizemin && allsizes[i]<sizemax){
+                sizes[numSizes] = allsizes[i];
+                numSizes++;
+            }
+        }
+        if(numSizes == 0){
+            entries = 0;
+            return nullptr;
+        }
+    }else{
+        numSizes = 0;
+    }
+
+    numPrices = 0;
+    int numPriceOptions;
+    int *allprices = getAllArray(stock.prices,numPriceOptions);
+    int pricemin = stoi(ui->priceMin->toPlainText().toStdString());
+    int pricemax = stoi(ui->priceMax->toPlainText().toStdString());
+    int *prices = new int[numPriceOptions];
+    if(ui->priceMin->toPlainText()!="" && ui->priceMin->toPlainText()!=""){
+        for(int i = 0; i<numPriceOptions; i++){
+            if(allprices[i]>=pricemin && allprices[i]<pricemax){
+                prices[numPrices] = allprices[i];
+                numPrices++;
+            }
+        }
+        if(numPrices == 0){
+            entries = 0;
+            return nullptr;
+        }
+    }else{
+        numPrices = 0;
+    }
+
+    int syear, smonth, sday, eyear, emonth, eday;
+    ui->dateStart->date().getDate(&syear, &smonth, &sday);
+    ui->dateEnd->date().getDate(&eyear, &emonth, &eday);
+    Date start(sday, smonth, syear);
+    Date end(eday, emonth, eyear);
+
+    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,start, end, entries);
 }
 
 Element<Ski>** ShopWindow::searchAllHelper(int &entries)
@@ -152,7 +198,7 @@ Element<Ski>** ShopWindow::searchAllHelper(int &entries)
     int *sizes = nullptr;//getParameterArray(stock.sizes,numSizes,choices);
     int *prices = nullptr;//getParameterArray(stock.prices,numPrices,choices);
 
-    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,entries);
+    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,Date(), Date(), entries);
 }
 
 void ShopWindow::clearHelper(){
@@ -219,6 +265,7 @@ void ShopWindow::on_openButton_clicked()
 }
 
 void ShopWindow::cuteReadInventory(QString filename){
+    stringstream ss;
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly))
     {
@@ -226,18 +273,8 @@ void ShopWindow::cuteReadInventory(QString filename){
      while (!in.atEnd())
      {
       QString line = in.readLine();
-      QStringList row = line.split(',',QString::SkipEmptyParts);
-      string brand,model,typestring,sizestring,pricestring;
-      int size,price;
-      Type type;
-      brand = row[0].toStdString();
-      model = row[1].toStdString();
-      if (row[2] == "ski") type = ski;
-      else type = snowboard;
-      size = row[3].toInt();
-      price = row[4].toInt();
-
-      stock.addUnit(brand,model,type,size,price,0);
+      ss << line.toStdString() << endl;
      }
     }
+    stock.loadFromFile(ss);
 }

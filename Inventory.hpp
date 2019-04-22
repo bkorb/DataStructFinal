@@ -6,6 +6,9 @@
 #include "Database.hpp"
 #include "priorityQueue.hpp"
 #include "Trie.hpp"
+#include <QFile>
+#include <QFileDialog>
+#include <QTextStream>
 
 using namespace std;
 
@@ -129,8 +132,8 @@ public:
 	void addUnit(ListElement<Ski> *ski);
 	Element<Ski> **searchUnits(string *brandList, int numBrands, string *modelList, int numModels, Type *typeList, int numTypes, int *sizeList, int numSizes, int *priceList, int numPrices, Date start, Date end, int &entries);
 	void removeUnit(Element<Ski> *unit);
-	void saveToFile(string filename);
-	void loadFromFile(string filename);
+    string saveToFile();
+    void loadFromFile(stringstream &file);
 	void addToOrders(Reservation order);
 	void fillOrder();
 	Reservation *findGroup(string groupName, int &entries);
