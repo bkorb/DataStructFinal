@@ -84,7 +84,7 @@ void makeQuery(Inventory &inventory){
 	int *prices = getParameterArray("Price", inventory.prices, numPrices);
 
 	int entries;
-	Element<Ski> **units = inventory.searchUnits(brands, numBrands, models, numModels, types, numTypes, sizes, numSizes, prices, numPrices, entries);
+	Element<Ski> **units = inventory.searchUnits(brands, numBrands, models, numModels, types, numTypes, sizes, numSizes, prices, numPrices, Date(1,1,1), Date(1,1,2), entries);
 	cout << "Choose how to sort (defult price): " << endl;
 	cout << "1. Sort by brand\n2. Sort by model\n3. Sort by type\n4. Sort by size\n5. Sort by price" << endl;
 	string choice;
@@ -119,15 +119,33 @@ void makeQuery(Inventory &inventory){
 	}
 	cout << "Found: " << entries << endl;
 	for(int i = 0; i<entries; i++){
-		cout << i+1 << ". " << units[i]->data << endl;
+		cout << units[i]->data << endl;
+		cout << i+1 << ". " << units[i]->data.serialize() << endl;
 	}
-	cout << "Choose a ski" << endl;
-	getline(cin, choice);
-	decision = stoi(choice);
-	Element<Ski> *unit = units[decision-1];
-	Element<Ski> **arr = new Element<Ski>*[1];
-	arr[0] = unit;
-	Reservation res(arr, 1, 1, 1, 7, -1, 10, "Me");
+	cout << "Choose (a) ski(s)" << endl;
+
+	string choices;
+	getline(cin, choices);
+
+	int num = 0;
+	istringstream ss(choices);
+	while(getline(ss, choice, ',')){
+		num++;
+	}
+	Element<Ski> **parameters = new Element<Ski>*[num];
+	istringstream ss1(choices);
+	int index = 0;
+	while(getline(ss1, choice, ',')){
+		parameters[index] = units[stoi(choice)-1];
+		index++;
+	}
+
+	//decision = stoi(choice);
+	//Element<Ski> *unit = units[decision-1];
+	//cout << unit << endl;
+	//Element<Ski> **arr = new Element<Ski>*[1];
+	//arr[0] = unit;
+	Reservation res(parameters, num, Date(1,1,1), Date(1,1,2), -1, 7, "Me"+to_string(time(nullptr)));
 	res.cost = rentalPrice(res);
 	inventory.addToOrders(res);
 	inventory.saveToFile("save1.csv");

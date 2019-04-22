@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cstring>
+#include <iostream>
 
 using namespace std;
 
@@ -39,6 +40,8 @@ class PriorityQueue
 		string rankingConverter(int _ranking); // reverses the changes in monthConverter()
 
 		void deleteReservation(T res); // removes a node in the queue from anywhere
+
+		string serialize();
 
 		private:
 		//Purpose: maintain heap properties by swapping node with parent if necessary
@@ -88,8 +91,8 @@ void PriorityQueue<T> :: enqueue(T node)
 		else
 		{
 			priorityQueue[currentQueueSize] = node;
-			repairUpward(currentQueueSize);
 			currentQueueSize++;
+			repairUpward(currentQueueSize-1);
 			return;
 		}
 	}
@@ -118,19 +121,19 @@ void PriorityQueue<T> :: dequeue()
 template <class T>
 T PriorityQueue<T> :: peek()
 {
-		return priorityQueue[0];
+	return priorityQueue[0];
 }
 
 template <class T>
 bool PriorityQueue<T> :: isFull()
 {
-		return (currentQueueSize == maxQueueSize);
+	return (currentQueueSize == maxQueueSize);
 }
 
 template <class T>
 bool PriorityQueue<T> :: isEmpty()
 {
-		return (currentQueueSize == 0);
+	return (currentQueueSize == 0);
 }
 
 template <class T>
@@ -157,7 +160,7 @@ void PriorityQueue<T> :: repairDownward(int nodeIndex)
 		priorityQueue[nodeIndex] = temp;
 		nodeIndex++;
 	}
-	if(currentQueueSize == 2)
+	if(currentQueueSize == 1)
 	{
 		return;
 	}
@@ -276,6 +279,15 @@ void PriorityQueue<T> :: deleteReservation(T res)
 		}
 		currentQueueSize--;
 	}
+}
+
+template <class T>
+string PriorityQueue<T>::serialize(){
+	string ret = "";
+	for(int i = 0; i<currentQueueSize; i++){
+		ret+=priorityQueue[i].serialize()+"\n";
+	}
+	return ret;
 }
 
 #endif
