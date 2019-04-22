@@ -33,7 +33,9 @@ HEADERS += \
         shopwindow.h \
         Database.hpp \
         Inventory.hpp \
-        Database.hpp
+        Database.hpp \
+        priorityQueue.hpp \
+        Trie.hpp
 
 FORMS += \
         shopwindow.ui
@@ -44,5 +46,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
+    skilist.qrc \
     skilist.qrc
     skis.csv

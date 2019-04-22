@@ -40,10 +40,10 @@ public:
 	int cost;
 	int timestamp;
 	string serialize();
-	GroupNode(string line);
+    Reservation(string line);
 	Reservation(): skis(nullptr), groupSize(-1), month(-1), day(-1), duration(-1), cost(-1), timestamp(-1){}
 	Reservation(Element<Ski> **_skis, int _groupSize, int _month, int _day, int _duration, int _cost, int _timestamp): skis(_skis), groupSize(_groupSize), month(_month), day(_day), duration(_duration), cost(_cost), timestamp(_timestamp){}
-}
+};
 
 class ReturnItem: public GroupNode{
 public:
@@ -55,7 +55,7 @@ public:
 	ReturnItem(string line);
 	ReturnItem(): repairNeeded(false), costOfRepair(-1), timestamp(-1){}
 	ReturnItem(bool _repairNeeded, int _costOfRepair, int _timestamp): repairNeeded(_repairNeeded), costOfRepair(_costOfRepair), timestamp(_timestamp){}; 
-}
+};
 
 //Inventory class definition
 class Inventory{
@@ -66,13 +66,8 @@ public:
 	ArrayTable<int> sizes;
 	ArrayTable<int> prices;
 	ListTable<Ski> units;
-<<<<<<< HEAD
-	
-=======
 	PriorityQueue orders;
-	
 	PriorityQueue returns;
->>>>>>> 5a9281ad6d3f399cd6fcf474bcb4053cf6f16a80
 	void addUnit(string brand, string model, Type type, int size, int price, int cost);
 	void addUnit(Ski ski);
 	void addUnit(ListElement<Ski> *ski);
