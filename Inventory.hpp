@@ -111,7 +111,7 @@ public:
 	string serialize();
 	ReturnItem(ListTable<Ski> &units, string line);
 	ReturnItem(): repairNeeded(false), costOfRepair(-1), timestamp(-1){}
-	ReturnItem(bool _repairNeeded, int _costOfRepair, int _timestamp): repairNeeded(_repairNeeded), costOfRepair(_costOfRepair), timestamp(_timestamp){}; 
+	ReturnItem(bool _repairNeeded, int _costOfRepair, int _timestamp): repairNeeded(_repairNeeded), costOfRepair(_costOfRepair), timestamp(_timestamp){};
 };
 
 //Inventory class definition

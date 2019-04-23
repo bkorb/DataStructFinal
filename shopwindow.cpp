@@ -1,5 +1,6 @@
 #include "shopwindow.h"
 #include "ui_shopwindow.h"
+#include "checkoutdialog.h"
 #include <sstream>
 #include <QFile>
 #include <QFileDialog>
@@ -46,18 +47,18 @@ T *getParameterArray(QListWidget *table, ArrayTable<T> &set, int &entries){
 
 //TODO Fix a segmentation fault.
 template <class T>
-T *getParameterArray(QComboBox *table, ArrayTable<T> &set, int &entries){
+T *getParameterArray(QComboBox *mintable, QComboBox *maxtable, ArrayTable<T> &set, int &entries){
     entries = 0;//Number of choices the user gave
     int numOptions = 0;//Number of options for the user to choose from
     T *options = set.getQueries(numOptions);//Get a list of options for every type in a table.	for(int i = 0; i<numOptions; i++){
-    int *choices = new int[table->count()];
-    if (table->currentIndex() <= 0)
-    {
-        entries = 0;
-        return nullptr;
-    }
+    int *choices = new int[mintable->count()];
+//    if (mintable->currentIndex() <= 0)
+//    {
+//        entries = 0;
+//        return nullptr;
+//    }
     int idx = 0;
-    for (int i = table->currentIndex() - 1; i < table->count(); i++)
+    for (int i = mintable->currentIndex(); i < maxtable->currentIndex()+1; i++)
     {
         choices[idx] = i;
         entries++;
@@ -111,10 +112,26 @@ void ShopWindow::loadOptions(){
         ui->modelLWidget->addItem(str);
     }
 
+
+    int *sizes = getAllArray(stock.sizes,numSizes);
+    ui->sizeminCBox->clear();
+    ui->sizemaxCBox->clear();
+    for (int i = 0; i < numSizes; i++){
+        ui->sizeminCBox->addItem(QString::number(sizes[i]));
+        ui->sizemaxCBox->addItem(QString::number(sizes[i]+10));
+    }
+    int *prices = getAllArray(stock.prices,numPrices);
+    ui->priceminCBox->clear();
+    ui->pricemaxCBox->clear();
+    for (int i = 0; i < numPrices; i++){
+        ui->priceminCBox->addItem(QString::number(prices[i]));
+        ui->pricemaxCBox->addItem(QString::number(prices[i]+10));
+    }
+
     ui->sizeMin->setText("0");
-    ui->sizeMax->setText("1000");
-    ui->priceMin->setText("0");
-    ui->priceMax->setText("1000");
+        ui->sizeMax->setText("1000");
+        ui->priceMin->setText("0");
+        ui->priceMax->setText("1000");
 }
 
 Element<Ski>** ShopWindow::searchHelper(int &entries)
@@ -124,68 +141,28 @@ Element<Ski>** ShopWindow::searchHelper(int &entries)
     numPrices = 0;
     string *brands = getParameterArray<string>(ui->brandLWidget,stock.brands,numBrands);
     string *models = getParameterArray<string>(ui->modelLWidget,stock.models,numModels);
-
     //Type *types = getParameterArray(ui->typeLWidget,stock.types,numTypes);
     numTypes = 0;
     Type *types = new Type[2];
-    if(ui->checkSki->isChecked()){
+    if (ui->checkSki->isChecked()){
         types[numTypes] = ski;
         numTypes++;
     }
-    if(ui->checkSnowboard->isChecked()){
+    if (ui->checkSnowboard->isChecked()){
         types[numTypes] = snowboard;
         numTypes++;
     }
 
-    numSizes = 0;
-    int numSizeOptions;
-    int *allsizes = getAllArray(stock.sizes,numSizeOptions);
-    int sizemin = stoi(ui->sizeMin->toPlainText().toStdString());
-    int sizemax = stoi(ui->sizeMax->toPlainText().toStdString());
-    int *sizes = new int[numSizeOptions];
-    if(ui->sizeMin->toPlainText()!="" && ui->sizeMin->toPlainText()!=""){
-        for(int i = 0; i<numSizeOptions; i++){
-            if(allsizes[i]>sizemin && allsizes[i]<sizemax){
-                sizes[numSizes] = allsizes[i];
-                numSizes++;
-            }
-        }
-        if(numSizes == 0){
-            entries = 0;
-            return nullptr;
-        }
-    }else{
-        numSizes = 0;
-    }
-
-    numPrices = 0;
-    int numPriceOptions;
-    int *allprices = getAllArray(stock.prices,numPriceOptions);
-    int pricemin = stoi(ui->priceMin->toPlainText().toStdString());
-    int pricemax = stoi(ui->priceMax->toPlainText().toStdString());
-    int *prices = new int[numPriceOptions];
-    if(ui->priceMin->toPlainText()!="" && ui->priceMin->toPlainText()!=""){
-        for(int i = 0; i<numPriceOptions; i++){
-            if(allprices[i]>=pricemin && allprices[i]<pricemax){
-                prices[numPrices] = allprices[i];
-                numPrices++;
-            }
-        }
-        if(numPrices == 0){
-            entries = 0;
-            return nullptr;
-        }
-    }else{
-        numPrices = 0;
-    }
+    int *sizes = getParameterArray(ui->sizeminCBox,ui->sizemaxCBox,stock.sizes,numSizes);
+    int *prices = getParameterArray(ui->priceminCBox,ui->pricemaxCBox,stock.prices,numPrices);
 
     int syear, smonth, sday, eyear, emonth, eday;
-    ui->dateStart->date().getDate(&syear, &smonth, &sday);
-    ui->dateEnd->date().getDate(&eyear, &emonth, &eday);
-    Date start(sday, smonth, syear);
-    Date end(eday, emonth, eyear);
+        ui->dateStart->date().getDate(&syear, &smonth, &sday);
+        ui->dateEnd->date().getDate(&eyear, &emonth, &eday);
+        Date start(sday, smonth, syear);
+        Date end(eday, emonth, eyear);
 
-    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,start, end, entries);
+    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,start,end,entries);
 }
 
 Element<Ski>** ShopWindow::searchAllHelper(int &entries)
@@ -198,7 +175,7 @@ Element<Ski>** ShopWindow::searchAllHelper(int &entries)
     int *sizes = nullptr;//getParameterArray(stock.sizes,numSizes,choices);
     int *prices = nullptr;//getParameterArray(stock.prices,numPrices,choices);
 
-    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,Date(), Date(), entries);
+    return stock.searchUnits(brands,numBrands,models,numModels,types,numTypes,sizes,numSizes,prices,numPrices,Date(),Date(),entries);
 }
 
 void ShopWindow::clearHelper(){
@@ -211,8 +188,12 @@ void ShopWindow::clearHelper(){
 
 void ShopWindow::on_searchButton_clicked()
 {
-    ui->tableWidget->clear();
+    QTableWidget *table = ui->tableWidget;
+    table->clearContents();
+    while (table->rowCount() > 0) table->removeRow(0);
     int entries = 0;
+    while (!currentSkiList.empty()) currentSkiList.pop_back();
+
     Element<Ski> **units = searchHelper(entries);
     int sortIndex = ui->sortCBox->currentIndex();
     switch (sortIndex){
@@ -236,6 +217,7 @@ void ShopWindow::on_searchButton_clicked()
     }
     for (int i = 0; i < entries; i++){
         Element<Ski> *item = units[i];
+        currentSkiList.push_back(item);
         string type;
         if (item->data.type == ski) type = "Ski";
         else type = "Board";
@@ -245,11 +227,21 @@ void ShopWindow::on_searchButton_clicked()
                  << QString::fromStdString(item->data.model)
                  << QString::number(item->data.size) + "cm"
                  << "$" + QString::number(item->data.price);
-        ui->tableWidget->insertRow(i);
+
+        //Expletive about Coding
+        int syear, smonth, sday, eyear, emonth, eday;
+            ui->dateStart->date().getDate(&syear, &smonth, &sday);
+            ui->dateEnd->date().getDate(&eyear, &emonth, &eday);
+            Date start(sday, smonth, syear);
+            Date end(eday, emonth, eyear);
+
+
+        table->insertRow(i);
         for (int j = 0; j < dataList.count(); j++){
         QTableWidgetItem *itm = new QTableWidgetItem;
         itm->setText(dataList[j]);
-        ui->tableWidget->setItem(i,j,itm);
+        if (inCart(item)) itm->setBackgroundColor(Qt::red);
+        table->setItem(i,j,itm);
         }
     }
     ui->countLabel->setText(QString::number(entries));
@@ -265,7 +257,6 @@ void ShopWindow::on_openButton_clicked()
 }
 
 void ShopWindow::cuteReadInventory(QString filename){
-    stringstream ss;
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly))
     {
@@ -273,8 +264,135 @@ void ShopWindow::cuteReadInventory(QString filename){
      while (!in.atEnd())
      {
       QString line = in.readLine();
-      ss << line.toStdString() << endl;
+      QStringList row = line.split(',',QString::SkipEmptyParts);
+      string brand,model,typestring,sizestring,pricestring;
+      int size,price;
+      Type type;
+      brand = row[0].toStdString();
+      model = row[1].toStdString();
+      if (row[2] == "ski") type = ski;
+      else type = snowboard;
+      size = row[3].toInt();
+      price = row[4].toInt();
+
+      stock.addUnit(brand,model,type,size,price,0);
      }
     }
-    stock.loadFromFile(ss);
 }
+
+void ShopWindow::on_addToButton_clicked()
+{
+    if (ui->tableWidget->currentRow() >= 0){
+    int row = ui->tableWidget->currentRow();
+    Element<Ski> *ski = currentSkiList[row];
+    if (!inCart(ski)){
+            QTableWidget *itm = ui->tableWidget;
+            QTableWidgetItem *nwItm = new QTableWidgetItem;
+            QString title = itm->item(row,1)->text() + " " + itm->item(row,2)->text() + " " + itm->item(row,3)->text();
+            nwItm->setText(title);
+
+            ui->cartTable->insertRow(0);
+            ui->cartTable->setItem(0,0,nwItm);
+            checkoutSkiList.push_back(ski);
+    }
+    on_searchButton_clicked();
+    }
+}
+
+void ShopWindow::getDates(Date &begin, Date &end){
+    int syear,smonth,sday,eyear,emonth,eday;
+    ui->dateStart->date().getDate(&syear,&smonth,&sday);
+    ui->dateEnd->date().getDate(&eyear,&emonth,&eday);
+    Date b(sday,smonth,syear);
+    Date e(eday,emonth,eyear);
+    begin = b;
+    end = e;
+}
+
+bool ShopWindow::inCart(Element<Ski> *ski){
+    bool inCart = false;
+    for (int i = 0; i < checkoutSkiList.size(); i++){
+        if (checkoutSkiList[i] == ski) inCart = true;
+    }
+    return inCart;
+}
+
+void ShopWindow::on_sizeminCBox_currentIndexChanged(int index)
+{if (ui->sizemaxCBox->currentIndex() < index) ui->sizemaxCBox->setCurrentIndex(index);}
+void ShopWindow::on_sizemaxCBox_currentIndexChanged(int index)
+{if (ui->sizeminCBox->currentIndex() > index) ui->sizeminCBox->setCurrentIndex(index);}
+
+void ShopWindow::on_priceminCBox_currentIndexChanged(int index)
+{if (ui->pricemaxCBox->currentIndex() < index) ui->pricemaxCBox->setCurrentIndex(index);}
+void ShopWindow::on_pricemaxCBox_currentIndexChanged(int index)
+{if (ui->priceminCBox->currentIndex() > index) ui->priceminCBox->setCurrentIndex(index);}
+
+void ShopWindow::on_clearButton_clicked()
+{
+    while (!checkoutSkiList.empty()) checkoutSkiList.pop_back();
+    while (ui->cartTable->rowCount() > 0) ui->cartTable->removeRow(0);
+    on_searchButton_clicked();
+}
+
+void ShopWindow::on_checkoutButton_clicked()
+{
+    if (!checkoutSkiList.empty())
+    {
+//    checkoutDialog checkoutdialog;
+//    checkoutdialog.setModal(true);
+//    checkoutdialog.exec();
+    Date begin, end;
+    getDates(begin,end);
+    int size = checkoutSkiList.size();
+    Element<Ski> **units = new Element<Ski>*[checkoutSkiList.size()];
+    for (int i = 0; i < checkoutSkiList.size(); i++){
+        units[i] = checkoutSkiList[i];
+    }
+//    Element<Ski> **units = 0;
+    string name = ui->groupTEdit->text().QString::toStdString();
+    Reservation currOrder(units,size,begin,end,-1,100,name);
+    currOrder.cost = rentalPrice(currOrder);
+    stock.addToOrders(currOrder);
+    ui->orderTWidget->insertRow(0);
+    QTableWidgetItem *tmp = new QTableWidgetItem;
+    QTableWidgetItem *tmp2 = new QTableWidgetItem;
+    string resName = currOrder.groupName;
+    int resSize = currOrder.groupSize;
+    tmp->setText(QString::fromStdString(resName));
+    tmp2->setText(QString::number(resSize));
+    ui->orderTWidget->setItem(0,0,tmp);
+    ui->orderTWidget->setItem(0,1,tmp2);
+    }
+
+    on_searchButton_clicked();
+    on_clearButton_clicked();
+}
+
+//void ShopWindow::on_refreshButton_clicked()
+//{
+//    if (!stock.orders.isEmpty()){
+//    queueHelper(stock.orders);
+//    }
+//    PriorityQueue<Reservation> em;
+//    queueHelper(stock.orders);
+
+//}
+
+//void ShopWindow::queueHelper(PriorityQueue<Reservation> pq){
+    //while (ui->orderTWidget->rowCount() > 0) ui->orderTWidget->removeRow(0);
+   // QTableWidget *table = ui->orderTWidget;
+//    int i = 0;
+//    while (i < 1)// && !pq.isEmpty())
+//    {
+//     QString groupname = QString::fromStdString(pq.peek().groupName);
+//     int size = table->rowCount();
+//     table->insertRow(0);
+
+//    // QTableWidgetItem *itm = new QTableWidgetItem;
+//    // itm->setText(groupname);
+//    // table->setItem(size,0,itm);
+//    i++;
+//    pq.dequeue();
+//    }
+//}
+

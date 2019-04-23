@@ -27,7 +27,8 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         shopwindow.cpp \
-        Inventory.cpp
+        Inventory.cpp \
+    checkoutdialog.cpp
 
 HEADERS += \
         shopwindow.h \
@@ -35,10 +36,13 @@ HEADERS += \
         Inventory.hpp \
         Database.hpp \
         priorityQueue.hpp \
-        Trie.hpp
+        Trie.hpp \
+    checkoutdialog.h
 
 FORMS += \
-        shopwindow.ui
+    newUI.ui \
+    shopwindow.ui \
+    checkoutdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -46,5 +50,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    skilist.qrc \
+    skilist.qrc
     skis.csv

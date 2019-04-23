@@ -217,4 +217,3 @@ void Trie<T>::remove(string key, T data){
 	}
 	removeLLNode<T>(data, node->head);
 }
-

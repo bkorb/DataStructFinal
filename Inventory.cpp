@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #include "Inventory.hpp"
@@ -346,7 +347,7 @@ string Ski::serialize(){
 }
 
 //Function that allows ski objects to be printed
-ostream & operator<<(ostream &Str, const Ski &v) { 
+ostream & operator<<(ostream &Str, const Ski &v) {
 	Str << v.type << ": " << v.brand << " " << v.model << ", " << v.size << "cm, $" << v.price;
 	return Str;
 }
@@ -356,7 +357,7 @@ bool Ski::operator==(const Ski &other){
 }
 
 //Function that allows type enum to be printed
-ostream & operator<<(ostream &Str, const Type &v) { 
+ostream & operator<<(ostream &Str, const Type &v) {
 	if(v==ski){
 		Str << "Ski";
 	}else if(v==snowboard){
@@ -829,7 +830,7 @@ void sortByBrand(Element<Ski> **&units, int low, int high){
 			}
 		}
 		swapElements(units[i], units[high]);
-		sortByBrand(units, low, i-1); 
+		sortByBrand(units, low, i-1);
 		sortByBrand(units, i+1, high);
 	}
 }
@@ -846,7 +847,7 @@ void sortByModel(Element<Ski> **&units, int low, int high){
 			}
 		}
 		swapElements(units[i], units[high]);
-		sortByModel(units, low, i-1); 
+		sortByModel(units, low, i-1);
 		sortByModel(units, i+1, high);
 	}
 }
@@ -863,7 +864,7 @@ void sortByType(Element<Ski> **&units, int low, int high){
 			}
 		}
 		swapElements(units[i], units[high]);
-		sortByType(units, low, i-1); 
+		sortByType(units, low, i-1);
 		sortByType(units, i+1, high);
 	}
 }
@@ -880,7 +881,7 @@ void sortBySize(Element<Ski> **&units, int low, int high){
 			}
 		}
 		swapElements(units[i], units[high]);
-		sortBySize(units, low, i-1); 
+		sortBySize(units, low, i-1);
 		sortBySize(units, i+1, high);
 	}
 }
@@ -897,7 +898,7 @@ void sortByPrice(Element<Ski> **&units, int low, int high){
 			}
 		}
 		swapElements(units[i], units[high]);
-		sortByPrice(units, low, i-1); 
+		sortByPrice(units, low, i-1);
 		sortByPrice(units, i+1, high);
 	}
 }
