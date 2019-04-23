@@ -5,6 +5,7 @@
 #include <string>
 #include <QTableWidget>
 #include <vector>
+#include <queue>
 #include "Inventory.hpp"
 #include "returnscreen.h"
 
@@ -63,9 +64,12 @@ private:
     Inventory stock;
     vector<Element<Ski>*> currentSkiList;
     vector<Element<Ski>*> checkoutSkiList;
+    queue<Element<Ski>*> returnSkiList;
     Ui::ShopWindow *ui;
     Element<Ski>** searchHelper(int &entries);
     Element<Ski>** searchAllHelper(int &entries);
+    void returnHelper();
+    void resetReturn();
     void queueHelper(PriorityQueue<Reservation> pq);
     void getDates(Date &begin, Date &end);
     bool inCart(Element<Ski> *ski);

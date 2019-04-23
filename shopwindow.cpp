@@ -472,15 +472,16 @@ void ShopWindow::on_returnSearchButton_clicked()
         int entries = 0;
         Reservation *res = stock.groups.search(name,entries);
         if (res != nullptr){
-            ui->returnSearchButton->setEnabled(false);
-
-            string skiname = res->skis[0]->data.brand + res->skis[0]->data.model + " " + to_string(res->skis[0]->data.size) + "cm";
-            ui->skilabel->setText(QString::fromStdString(skiname));
-            ui->skitag->setEnabled(true);
-            ui->skilabel->setEnabled(true);
-            ui->nextSkiButton->setEnabled(true);
-            ui->checkRepairs->setEnabled(true);
-
+            for (int i = 0; i < res->groupSize; i++) returnSkiList.push(res->skis[i]);
+            returnHelper();
+//            ui->returnSearchButton->setEnabled(false);
+//            for (int i = 0; i < res->groupSize; i++) returnSkiList.push(res->skis[i]);
+//            string skiname = res->skis[0]->data.brand + res->skis[0]->data.model + " " + to_string(res->skis[0]->data.size) + "cm";
+//            ui->skilabel->setText(QString::fromStdString(skiname));
+//            ui->skitag->setEnabled(true);
+//            ui->skilabel->setEnabled(true);
+//            ui->nextSkiButton->setEnabled(true);
+//            ui->checkRepairs->setEnabled(true);
         }
         else{
             checkoutDialog bad;
@@ -511,5 +512,37 @@ void ShopWindow::on_nextSkiButton_clicked()
     else cost = ui->costLEdit->text().QString::toInt();
 
     ReturnItem ri(repairs,cost,timestamp);
+    ri.ski = returnSkiList.front();
+    stock.addToReturns(ri);
+    returnSkiList.pop();
+    if (!returnSkiList.empty()) returnHelper();
+    else{
+        ReturnScreen rs;
+        rs.setModal(true);
+        rs.exec();
+        resetReturn();
+    }
+    ui->checkRepairs->setCheckState(Qt::CheckState(0));
+    ui->costLEdit->setText("");
+}
 
+void ShopWindow::returnHelper(){
+    ui->returnSearchButton->setEnabled(false);
+    string skiname = returnSkiList.front()->data.brand + " " + returnSkiList.front()->data.model + " " + to_string(returnSkiList.front()->data.size) + "cm";
+    ui->skilabel->setText(QString::fromStdString(skiname));
+    ui->skitag->setEnabled(true);
+    ui->skilabel->setEnabled(true);
+    ui->nextSkiButton->setEnabled(true);
+    ui->checkRepairs->setEnabled(true);
+}
+
+void ShopWindow::resetReturn(){
+    ui->returnSearchButton->setEnabled(true);
+    ui->skitag->setEnabled(false);
+    ui->skilabel->setText("");
+    ui->skilabel->setEnabled(false);
+    ui->checkRepairs->setEnabled(false);
+    ui->costLEdit->setEnabled(false);
+    ui->costLabel->setEnabled(false);
+    ui->returnSearchLEdit->setText("");
 }

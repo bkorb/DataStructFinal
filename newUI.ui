@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShopWindow</class>
+ <widget class="QDialog" name="ShopWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>986</width>
+    <height>802</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>240</y>
+     <width>341</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="centralWidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>921</width>
+     <height>618</height>
+    </rect>
+   </property>
+   <widget class="QPushButton" name="openButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>131</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>load inventory</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>131</width>
+      <height>439</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Brand</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="brandLWidget">
+       <property name="font">
+        <font>
+         <family>8514oem</family>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::MultiSelection</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Model</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="modelLWidget">
+       <property name="font">
+        <font>
+         <family>8514oem</family>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::MultiSelection</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>100</y>
+      <width>208</width>
+      <height>227</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>7</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QCheckBox" name="checkSki">
+         <property name="text">
+          <string>Ski</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkSnowboard">
+         <property name="text">
+          <string>Snowboard</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Price Range</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="priceMin">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Min</string>
+           </property>
+           <property name="statusTip">
+            <string>Min</string>
+           </property>
+           <property name="whatsThis">
+            <string>Min</string>
+           </property>
+           <property name="inputMethodHints">
+            <set>Qt::ImhDigitsOnly</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="priceMax">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Max</string>
+           </property>
+           <property name="statusTip">
+            <string>Max</string>
+           </property>
+           <property name="whatsThis">
+            <string>Max</string>
+           </property>
+           <property name="inputMethodHints">
+            <set>Qt::ImhDigitsOnly</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Size Range</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="sizeMin">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Min</string>
+           </property>
+           <property name="statusTip">
+            <string>Min</string>
+           </property>
+           <property name="whatsThis">
+            <string>Min</string>
+           </property>
+           <property name="inputMethodHints">
+            <set>Qt::ImhDigitsOnly</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="sizeMax">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Max</string>
+           </property>
+           <property name="statusTip">
+            <string>Max</string>
+           </property>
+           <property name="whatsThis">
+            <string>Max</string>
+           </property>
+           <property name="inputMethodHints">
+            <set>Qt::ImhDigitsOnly</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Date Range</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QDateEdit" name="dateStart">
+           <property name="displayFormat">
+            <string>MM/dd/yyyy</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateEdit" name="dateEnd">
+           <property name="displayFormat">
+            <string>MM/dd/yyyy</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>136</y>
+      <width>501</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>8514oem</family>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="tabKeyNavigation">
+     <bool>true</bool>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::ExtendedSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
+    <property name="horizontalScrollMode">
+     <enum>QAbstractItemView::ScrollPerPixel</enum>
+    </property>
+    <property name="gridStyle">
+     <enum>Qt::SolidLine</enum>
+    </property>
+    <property name="sortingEnabled">
+     <bool>true</bool>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string>New Row</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>itm</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>Type</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Brand</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Model</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Size</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Price</string>
+     </property>
+    </column>
+    <item row="0" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="0" column="1">
+     <property name="text">
+      <string>stes</string>
+     </property>
+    </item>
+    <item row="0" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="0" column="3">
+     <property name="text">
+      <string>sets</string>
+     </property>
+    </item>
+    <item row="0" column="4">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="0">
+     <property name="text">
+      <string>stest</string>
+     </property>
+    </item>
+    <item row="1" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="1" column="4">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="2" column="4">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="2">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="3" column="4">
+     <property name="text">
+      <string>wttes</string>
+     </property>
+    </item>
+    <item row="4" column="0">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="4" column="1">
+     <property name="text">
+      <string>sset</string>
+     </property>
+    </item>
+    <item row="4" column="2">
+     <property name="text">
+      <string>tes</string>
+     </property>
+    </item>
+    <item row="4" column="3">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="4" column="4">
+     <property name="text">
+      <string>sette</string>
+     </property>
+    </item>
+    <item row="5" column="0">
+     <property name="text">
+      <string>tes</string>
+     </property>
+    </item>
+    <item row="5" column="1">
+     <property name="text">
+      <string>test</string>
+     </property>
+    </item>
+    <item row="5" column="2">
+     <property name="text">
+      <string>wstet</string>
+     </property>
+    </item>
+    <item row="5" column="3">
+     <property name="text">
+      <string>stes</string>
+     </property>
+    </item>
+    <item row="5" column="4">
+     <property name="text">
+      <string>tes</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>540</y>
+      <width>62</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="foundLabel">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Found:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="countLabel">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_4">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>99</y>
+      <width>381</width>
+      <height>38</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Sort by</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="sortCBox"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="searchButton">
+       <property name="text">
+        <string>search</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1174</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>4</width>
+     <height>14</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>3</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ShopWindow</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ShopWindow</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

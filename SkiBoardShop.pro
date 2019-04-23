@@ -28,7 +28,8 @@ SOURCES += \
         main.cpp \
         shopwindow.cpp \
         Inventory.cpp \
-    checkoutdialog.cpp
+    checkoutdialog.cpp \
+    returnscreen.cpp
 
 HEADERS += \
         shopwindow.h \
@@ -37,12 +38,14 @@ HEADERS += \
         Database.hpp \
         priorityQueue.hpp \
         Trie.hpp \
-    checkoutdialog.h
+    checkoutdialog.h \
+    returnscreen.h
 
 FORMS += \
     newUI.ui \
     shopwindow.ui \
-    checkoutdialog.ui
+    checkoutdialog.ui \
+    returnscreen.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
