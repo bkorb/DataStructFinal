@@ -6,13 +6,14 @@ checkoutDialog::checkoutDialog(QWidget *parent) :
     ui(new Ui::checkoutDialog)
 {
     ui->setupUi(this);
-    ui->outTWidget->insertRow(0);
-    QTableWidgetItem *itm = new QTableWidgetItem;
-    itm->setText("place");
-    ui->outTWidget->setItem(0,0,itm);
 }
 
 checkoutDialog::~checkoutDialog()
 {
     delete ui;
+}
+
+void checkoutDialog::on_pushButton_clicked()
+{
+    close();
 }

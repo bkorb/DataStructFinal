@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QMessageBox>
 
 template <class T>
 T  *getAllArray(ArrayTable<T> &set, int &entries){
@@ -128,10 +129,10 @@ void ShopWindow::loadOptions(){
         ui->pricemaxCBox->addItem(QString::number(prices[i]+10));
     }
 
-    ui->sizeMin->setText("0");
-        ui->sizeMax->setText("1000");
-        ui->priceMin->setText("0");
-        ui->priceMax->setText("1000");
+//    ui->sizeMin->setText("0");
+//        ui->sizeMax->setText("1000");
+//        ui->priceMin->setText("0");
+//        ui->priceMax->setText("1000");
 }
 
 Element<Ski>** ShopWindow::searchHelper(int &entries)
@@ -252,11 +253,11 @@ void ShopWindow::on_openButton_clicked()
     clearHelper();
     QString filename=QFileDialog::getOpenFileName(this,tr("Open File"),
                                                   "C://", "csv files (*.csv)");
-    cuteReadInventory(filename);
+    cuteReadCsvInventory(filename);
     loadOptions();
 }
 
-void ShopWindow::cuteReadInventory(QString filename){
+void ShopWindow::cuteReadCsvInventory(QString filename){
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly))
     {
@@ -280,6 +281,21 @@ void ShopWindow::cuteReadInventory(QString filename){
     }
 }
 
+void ShopWindow::cuteReadInventory(QString filename){
+    stringstream ss;
+    QFile file(filename);
+    if (file.open(QIODevice::ReadOnly))
+    {
+     QTextStream in(&file);
+     while (!in.atEnd())
+     {
+      QString line = in.readLine();
+      ss << line.toStdString() << endl;
+     }
+    }
+    stock.loadFromFile(ss);
+}
+
 void ShopWindow::on_addToButton_clicked()
 {
     if (ui->tableWidget->currentRow() >= 0){
@@ -290,9 +306,13 @@ void ShopWindow::on_addToButton_clicked()
             QTableWidgetItem *nwItm = new QTableWidgetItem;
             QString title = itm->item(row,1)->text() + " " + itm->item(row,2)->text() + " " + itm->item(row,3)->text();
             nwItm->setText(title);
+            QTableWidgetItem *nwItm2 = new QTableWidgetItem;
+            nwItm2->setText("$" + QString::number(ski->data.price));
 
             ui->cartTable->insertRow(0);
             ui->cartTable->setItem(0,0,nwItm);
+            ui->cartTable->setItem(0,1,nwItm2);
+
             checkoutSkiList.push_back(ski);
     }
     on_searchButton_clicked();
@@ -331,11 +351,18 @@ void ShopWindow::on_clearButton_clicked()
 {
     while (!checkoutSkiList.empty()) checkoutSkiList.pop_back();
     while (ui->cartTable->rowCount() > 0) ui->cartTable->removeRow(0);
+    ui->groupTEdit->setText("");
     on_searchButton_clicked();
 }
 
 void ShopWindow::on_checkoutButton_clicked()
 {
+    if (ui->groupTEdit->text() == ""){
+        checkoutDialog checkout;
+        checkout.setModal(true);
+        checkout.exec();
+    }
+    else{
     if (!checkoutSkiList.empty())
     {
 //    checkoutDialog checkoutdialog;
@@ -353,30 +380,38 @@ void ShopWindow::on_checkoutButton_clicked()
     Reservation currOrder(units,size,begin,end,-1,100,name);
     currOrder.cost = rentalPrice(currOrder);
     stock.addToOrders(currOrder);
-    ui->orderTWidget->insertRow(0);
-    QTableWidgetItem *tmp = new QTableWidgetItem;
-    QTableWidgetItem *tmp2 = new QTableWidgetItem;
-    string resName = currOrder.groupName;
-    int resSize = currOrder.groupSize;
-    tmp->setText(QString::fromStdString(resName));
-    tmp2->setText(QString::number(resSize));
-    ui->orderTWidget->setItem(0,0,tmp);
-    ui->orderTWidget->setItem(0,1,tmp2);
+//    ui->orderTWidget->insertRow(0);
+//    QTableWidgetItem *tmp = new QTableWidgetItem;
+//    QTableWidgetItem *tmp2 = new QTableWidgetItem;
+//    string resName = currOrder.groupName;
+//    int resSize = currOrder.groupSize;
+//    tmp->setText(QString::fromStdString(resName));
+//    tmp2->setText(QString::number(resSize));
+//    ui->orderTWidget->setItem(0,0,tmp);
+//    ui->orderTWidget->setItem(0,1,tmp2);
     }
 
     on_searchButton_clicked();
     on_clearButton_clicked();
+    on_refreshButton_clicked();
+    }
 }
 
-//void ShopWindow::on_refreshButton_clicked()
-//{
-//    if (!stock.orders.isEmpty()){
-//    queueHelper(stock.orders);
-//    }
-//    PriorityQueue<Reservation> em;
-//    queueHelper(stock.orders);
-
-//}
+void ShopWindow::on_refreshButton_clicked()
+{
+    QTableWidget *nxtTmp = ui->nextOut;
+    if (!stock.orders.isEmpty()){
+    string name = stock.orders.peek().groupName;
+    int size = stock.orders.peek().groupSize;
+    QTableWidgetItem *itm = new QTableWidgetItem;
+    QTableWidgetItem *itm2 = new QTableWidgetItem;
+    itm->setText(QString::fromStdString(name));
+    itm2->setText(QString::number(size));
+    nxtTmp->setItem(0,0,itm);
+    nxtTmp->setItem(0,1,itm2);
+    }
+    else nxtTmp->clearContents();
+}
 
 //void ShopWindow::queueHelper(PriorityQueue<Reservation> pq){
     //while (ui->orderTWidget->rowCount() > 0) ui->orderTWidget->removeRow(0);
@@ -396,3 +431,85 @@ void ShopWindow::on_checkoutButton_clicked()
 //    }
 //}
 
+
+void ShopWindow::on_fillButton_clicked()
+{
+
+    if (!stock.orders.isEmpty()){
+    ui->orderTWidget->insertRow(0);
+    QTableWidgetItem *tmp = new QTableWidgetItem;
+    QTableWidgetItem *tmp2 = new QTableWidgetItem;
+    string resName = stock.orders.peek().groupName;
+    int resSize = stock.orders.peek().groupSize;
+    tmp->setText(QString::fromStdString(resName));
+    tmp2->setText(QString::number(resSize));
+    ui->orderTWidget->setItem(0,0,tmp);
+    ui->orderTWidget->setItem(0,1,tmp2);
+
+    string name = stock.orders.peek().groupName;
+    stock.groups.insert(name,stock.orders.peek());
+    stock.orders.dequeue();
+    }
+
+    on_refreshButton_clicked();
+}
+
+void ShopWindow::on_serialButton_clicked()
+{
+    {
+        clearHelper();
+        QString filename=QFileDialog::getOpenFileName(this,tr("Open File"),
+                                                      "C://", "csv files (*.csv)");
+        cuteReadInventory(filename);
+        loadOptions();
+    }
+}
+
+void ShopWindow::on_returnSearchButton_clicked()
+{
+    string name = ui->returnSearchLEdit->text().QString::toStdString();
+    if (name != ""){
+        int entries = 0;
+        Reservation *res = stock.groups.search(name,entries);
+        if (res != nullptr){
+            ui->returnSearchButton->setEnabled(false);
+
+            string skiname = res->skis[0]->data.brand + res->skis[0]->data.model + " " + to_string(res->skis[0]->data.size) + "cm";
+            ui->skilabel->setText(QString::fromStdString(skiname));
+            ui->skitag->setEnabled(true);
+            ui->skilabel->setEnabled(true);
+            ui->nextSkiButton->setEnabled(true);
+            ui->checkRepairs->setEnabled(true);
+
+        }
+        else{
+            checkoutDialog bad;
+            bad.setModal(true);
+            bad.exec();
+        }
+    }
+}
+
+void ShopWindow::on_checkRepairs_stateChanged(int arg1)
+{
+    if (arg1 > 0){
+        ui->costLEdit->setEnabled(true);
+        ui->costLabel->setEnabled(true);
+    }
+    else{
+        ui->costLEdit->setEnabled(false);
+        ui->costLabel->setEnabled(false);
+    }
+}
+
+void ShopWindow::on_nextSkiButton_clicked()
+{
+    bool repairs = ui->checkRepairs->isChecked();
+    int cost;
+    int timestamp = 1;
+    if (!repairs) cost = 0;
+    else cost = ui->costLEdit->text().QString::toInt();
+
+    ReturnItem ri(repairs,cost,timestamp);
+
+}

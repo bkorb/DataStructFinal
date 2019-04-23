@@ -6,6 +6,7 @@
 #include <QTableWidget>
 #include <vector>
 #include "Inventory.hpp"
+#include "returnscreen.h"
 
 namespace Ui {
 class ShopWindow;
@@ -27,6 +28,8 @@ private slots:
 
     void cuteReadInventory(QString filename);
 
+    void cuteReadCsvInventory(QString filename);
+
     void loadOptions();
 
 
@@ -46,6 +49,16 @@ private slots:
 
     void on_refreshButton_clicked();
 
+    void on_fillButton_clicked();
+
+    void on_serialButton_clicked();
+
+    void on_returnSearchButton_clicked();
+
+    void on_checkRepairs_stateChanged(int arg1);
+
+    void on_nextSkiButton_clicked();
+
 private:
     Inventory stock;
     vector<Element<Ski>*> currentSkiList;
@@ -53,7 +66,7 @@ private:
     Ui::ShopWindow *ui;
     Element<Ski>** searchHelper(int &entries);
     Element<Ski>** searchAllHelper(int &entries);
-//    void queueHelper(PriorityQueue<Reservation> pq);
+    void queueHelper(PriorityQueue<Reservation> pq);
     void getDates(Date &begin, Date &end);
     bool inCart(Element<Ski> *ski);
 

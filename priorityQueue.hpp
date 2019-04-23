@@ -108,8 +108,11 @@ void PriorityQueue<T> :: dequeue()
 	if(!isEmpty())
 	{
 		currentQueueSize--;
-		priorityQueue[0] = priorityQueue[currentQueueSize];
-		repairDownward(0);
+        if (currentQueueSize != 0)
+        {
+          priorityQueue[0] = priorityQueue[currentQueueSize];
+          repairDownward(0);
+        }
 		return;
 	}
 	else
