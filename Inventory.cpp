@@ -185,12 +185,10 @@ bool Availability::isAvailable(Date a, Date b){
 	AvailabilityNode *node = head;
 	while(node){
 		if(node->intersects(a, b)){
-			cout << "false" << endl;
 			return false;
 		}
 		node = node->next;
 	}
-	cout << "true" << endl;
 	return true;
 }
 
@@ -231,6 +229,7 @@ string Availability::serialize(){
 }
 
 void Availability::readLine(string line){
+	if(line=="") return;
 	istringstream ss(line);
 	string hold;
 	while(getline(ss, hold, '!')){
@@ -239,6 +238,7 @@ void Availability::readLine(string line){
 		string send;
 		getline(ss2, sstart, ':');
 		getline(ss2, send, ':');
+		if(sstart=="" || send=="") return;
 		addHold(Date(stoi(sstart)), Date(stoi(send)));
 	}
 }
@@ -770,7 +770,6 @@ void Inventory::loadFromFile(stringstream &file){
 		string data;
 		getline(ss, key, ':');
 		getline(ss, data, ':');
-		cout << key << ": " << data << endl;
 		Reservation res(units, data);
 		groups.insert(key, res);
 	}
@@ -798,6 +797,9 @@ Reservation *Inventory::findGroup(string groupName, int &entries){
 
 void Inventory::removeFromGroups(Reservation group){
 	groups.remove(group.groupName, group);
+	for(int i = 0; i<group.groupSize; i++){
+		group.skis[i]->data.avail.removeHold(group.start, group.end);
+	}
 }
 
 void Inventory::addToReturns(ReturnItem item){
