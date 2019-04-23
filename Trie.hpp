@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -38,6 +39,12 @@ public:
 	string serialize();
 	~Trie();
 };
+
+inline string preprocess(string data){
+	transform(data.begin(), data.end(), data.begin(), ::tolower);
+	data.erase(std::remove(data.begin(), data.end(), ' '), data.end());
+    return data;
+} 
 
 template <class T>
 TrieNode<T>::TrieNode(int _size, char _value, string _key){
@@ -87,7 +94,8 @@ Trie<T>::~Trie(){
 }
 
 template <class T>
-void Trie<T>::insert(string key, T data){
+void Trie<T>::insert(string ukey, T data){
+	string key = preprocess(ukey);
 	TrieNode<T> **array = children;
 	for(int i = 0; i<key.length()-1; i++){
 		int index = key[i] - 'a';
@@ -114,7 +122,6 @@ template <class T>
 vector<TrieNode<T> *> getAllLeaves(TrieNode<T> *node){
 	vector<TrieNode<T> *> vec;
 	if(node->isLeaf){
-		cout << "LEAF" << endl;
 		vec.push_back(node);
 	}
 	for(int i = 0; i<node->size; i++){
@@ -133,13 +140,10 @@ string Trie<T>::serialize(){
 		if(children[i]){
 			vector<TrieNode<T> *> v = getAllLeaves(children[i]);
 			for(int i = 0; i<v.size(); i++){
-				cout << i << endl;
 				ret+=v[i]->serialize();
 			}
 		}
 	}
-	cout << "GROUPS" << endl;
-	cout << ret << endl;
 	return ret;
 }
 
@@ -180,7 +184,8 @@ vector<T> getAllEntries(TrieNode<T> *node){
 }
 
 template <class T>
-T *Trie<T>::search(string key, int &entries){
+T *Trie<T>::search(string ukey, int &entries){
+	string key = preprocess(ukey);
 	TrieNode<T> *node;
 	TrieNode<T> **array = children;
 	for(int i = 0; i<key.length(); i++){
@@ -203,7 +208,8 @@ T *Trie<T>::search(string key, int &entries){
 }
 
 template <class T>
-void Trie<T>::remove(string key, T data){
+void Trie<T>::remove(string ukey, T data){
+	string key = preprocess(ukey);
 	TrieNode<T> *node;
 	TrieNode<T> **array = children;
 	for(int i = 0; i<key.length(); i++){

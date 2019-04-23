@@ -2,9 +2,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 #include "Inventory.hpp"
-//#include <QApplication>
-//#include <QPushButton>
 
 using namespace std;
 
@@ -75,7 +74,7 @@ T *getParameterArray(string parameter, ArrayTable<T> &set, int &entries){
 }
 
 //Function to prompt the user to make a query
-void makeQuery(Inventory &inventory){
+Element<Ski> **makeQuery(Inventory &inventory, int &num, Date start, Date end){
 	int numBrands, numModels, numTypes, numSizes, numPrices;
 	string *brands = getParameterArray<string>("Brand", inventory.brands, numBrands);
 	string *models = getParameterArray<string>("Model", inventory.models, numModels);
@@ -84,7 +83,7 @@ void makeQuery(Inventory &inventory){
 	int *prices = getParameterArray("Price", inventory.prices, numPrices);
 
 	int entries;
-	Element<Ski> **units = inventory.searchUnits(brands, numBrands, models, numModels, types, numTypes, sizes, numSizes, prices, numPrices, Date(1,1,1), Date(1,1,2), entries);
+	Element<Ski> **units = inventory.searchUnits(brands, numBrands, models, numModels, types, numTypes, sizes, numSizes, prices, numPrices, start, end, entries);
 	cout << "Choose how to sort (defult price): " << endl;
 	cout << "1. Sort by brand\n2. Sort by model\n3. Sort by type\n4. Sort by size\n5. Sort by price" << endl;
 	string choice;
@@ -127,7 +126,7 @@ void makeQuery(Inventory &inventory){
 	string choices;
 	getline(cin, choices);
 
-	int num = 0;
+	num = 0;
 	istringstream ss(choices);
 	while(getline(ss, choice, ',')){
 		num++;
@@ -139,22 +138,214 @@ void makeQuery(Inventory &inventory){
 		parameters[index] = units[stoi(choice)-1];
 		index++;
 	}
+	return parameters;
 
 	//decision = stoi(choice);
 	//Element<Ski> *unit = units[decision-1];
 	//cout << unit << endl;
 	//Element<Ski> **arr = new Element<Ski>*[1];
 	//arr[0] = unit;
-	Reservation res(parameters, num, Date(1,1,1), Date(1,1,2), -1, 7, "Me"+to_string(time(nullptr)));
-	res.cost = rentalPrice(res);
-	inventory.addToOrders(res);
-	inventory.saveToFile("save1.csv");
+}
+
+void showMenu(){
+	cout << "1. Search for items" << endl;
+	cout << "2. Checkout" << endl;
+	cout << "3. Sell items" << endl;
+	cout << "4. Pick up gear" << endl;
+	cout << "5. Make a return" << endl;
+	cout << "6. Return an item to inventory" << endl;
+	cout << "7. Add a ski/snowboard" << endl;
+	cout << "8. Load inventory from save" << endl;
+	cout << "9. Save inventory to file" << endl;
+	cout << "10. Quit" << endl;
 }
 
 //Main
 int main(int argc, char **argv){
 	Inventory inventory;
-	inventory.loadFromFile("save1.csv");
+	Element<Ski> **cart;
+	int cartsize = 0;
+	Date cstart;
+	Date cend;
+	while(true){
+		showMenu();
+		string choice;
+		getline(cin, choice);
+		int c = stoi(choice);
+		switch(c){
+			case 1:{
+				cout << "Choose a start date:" << endl;
+				string sday, smonth, syear;
+				cout << "Enter day:" << endl;
+				getline(cin, sday);
+				cout << "Enter month:" << endl;
+				getline(cin, smonth);
+				cout << "Enter year:" << endl;
+				getline(cin, syear);
+				Date start(stoi(sday), stoi(smonth), stoi(syear));
+
+				cout << "Choose an end date:" << endl;
+				cout << "Enter day:" << endl;
+				getline(cin, sday);
+				cout << "Enter month:" << endl;
+				getline(cin, smonth);
+				cout << "Enter year:" << endl;
+				getline(cin, syear);
+				Date end(stoi(sday), stoi(smonth), stoi(syear));
+
+				Element<Ski> **tskis = new Element<Ski>*[100];
+				int items = 0;
+				while(true){
+					int num;
+					Element<Ski> **skis = makeQuery(inventory, num, start, end);
+					for(int i = 0; i<num; i++){
+						tskis[items] = skis[i];
+						items++;
+					}
+					cout << "Would you like to make another query? (y/n)" << endl;
+					string repeat;
+					getline(cin, repeat);
+					if(repeat!="y"){
+						cartsize = items;
+						cart = tskis;
+						cstart = start;
+						cend = end;
+						cout << "Items selected:" << endl;
+						for(int i = 0; i<cartsize; i++){
+							cout << cart[i]->data << endl;
+						}
+						break;
+					}
+				}
+				break;
+			}case 2:{
+				cout << "Enter your group name: "<< endl;
+				string gn;
+				getline(cin, gn);
+				Reservation res(cart, cartsize, cstart, cend, -1, (int)time(nullptr), gn);
+				res.cost = rentalPrice(res);
+				inventory.addToOrders(res);
+				cout << "Checked out successfully" << endl;
+				break;
+			}case 3:{
+				for(int i = 0; i<cartsize; i++){
+					cout << "Sold " << cart[i]->data << " for $" << salesCost(cart[i]->data) << endl;
+					inventory.removeUnit(cart[i]);
+				}
+				break;
+			}case 4:{
+				Reservation res = inventory.orders.peek();
+				inventory.fillOrder();
+				cout << "Group: " << res.groupName << " picked up gear" << endl;
+				break;
+			}case 5:{
+				while(true){
+					cout << "Enter group name:" << endl;
+					string group;
+					getline(cin, group);
+					int elems;
+					Reservation *gs = inventory.groups.search(group, elems);
+					for(int i = 0; i<elems; i++){
+						Reservation res = gs[i];
+						cout << "Group " << (i+1) << " (" << res.groupName <<"):" << endl;
+						for(int j = 0; j<res.groupSize; j++){
+							cout << res.skis[j]->data << endl;
+						}
+						cout << endl;
+					}
+					cout << "Select group or type cancel to cancel search:" << endl;
+					string choice;
+					getline(cin, choice);
+					if(choice=="cancel"){
+						cout << "Search cancelled" << endl;
+						break;
+					}else if(choice!=""){
+						int decision = stoi(choice)-1;
+						Reservation res = gs[decision];
+						inventory.removeFromGroups(res);
+						for(int i = 0; i<res.groupSize; i++){
+							Element<Ski> *ski = res.skis[i];
+							cout << "Ski " << i << ": " << ski->data << endl;
+							cout << "Repairs needed? (t/f)" << endl;
+							string rns;
+							getline(cin, rns);
+							bool rn = (rns=="t");
+							int cor = 0;
+							if(rn){
+								cout << "Enter cost of repairs:" << endl;
+								string scor;
+								getline(cin, scor);
+								cor = stoi(scor);
+							}
+							int ts = (int)time(nullptr);
+							ReturnItem ret(rn, cor, ts);
+							ret.ski = ski;
+							inventory.addToReturns(ret);
+						}
+						cout << "Group: " << res.groupName << " returned items" << endl;
+						break;
+					}
+				}
+				break;
+			}case 6:{
+				ReturnItem ret = inventory.returns.peek();
+				inventory.returns.dequeue();
+				cout << "Returned " << ret.ski->data << " with $" << ret.costOfRepair << " worth of repairs to inventory" << endl; 
+				break;
+			}case 7:{
+				string brand;
+				string model;
+				Type type;
+				int size;
+				int price;
+				int cost;
+				cout << "Enter type:" << endl;
+				string stype;
+				getline(cin, stype);
+				if(stype=="ski"){
+					type = ski;
+				}else{
+					type = snowboard;
+				}
+				cout << "Enter brand:" << endl;
+				getline(cin, brand);
+				cout << "Enter model:" << endl;
+				getline(cin, model);
+				string ssize;
+				cout << "Enter size:" << endl;
+				getline(cin, ssize);
+				size = stoi(ssize);
+				string sprice;
+				cout << "Enter price:" << endl;
+				getline(cin, sprice);
+				price = stoi(sprice);
+				string scost;
+				cout << "Enter cost:" << endl;
+				getline(cin, scost);
+				cost = stoi(scost);
+				inventory.addUnit(brand, model, type, size, price, cost);
+				cout << "New ski added" << endl;
+				break;
+			}case 8:{
+				cout << "Enter file to load from:" << endl;
+				string filename;
+				getline(cin, filename);
+				inventory.loadFromFile(filename);
+				cout << "Inventory loaded from " << filename << endl;
+				break;
+			}case 9:{
+				cout << "Enter file to save to:" << endl;
+				string filename;
+				getline(cin, filename);
+				inventory.saveToFile(filename);
+				cout << "Inventory saved to " << filename << endl;
+				break;
+			}case 10:{
+				return 0;
+				break;
+			}
+		}
+	}
 	//readFileIntoInventory("skis.csv", inventory);
 	//inventory.saveToFile("save1.csv");
 
@@ -165,9 +356,6 @@ int main(int argc, char **argv){
 
     return app.exec();*/
 
-    while(true){
-		makeQuery(inventory);
-	}
 	/*cout << "start" << endl;
 	Trie<string> test(26);
 	test.insert("cat", "feline");
