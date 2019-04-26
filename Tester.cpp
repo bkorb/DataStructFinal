@@ -118,8 +118,7 @@ Element<Ski> **makeQuery(Inventory &inventory, int &num, Date start, Date end){
 	}
 	cout << "Found: " << entries << endl;
 	for(int i = 0; i<entries; i++){
-		cout << units[i]->data << endl;
-		cout << i+1 << ". " << units[i]->data.serialize() << endl;
+		cout << i+1 << ". " << units[i]->data << endl;
 	}
 	cout << "Choose (a) ski(s)" << endl;
 
